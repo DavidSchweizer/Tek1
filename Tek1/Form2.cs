@@ -208,6 +208,8 @@ namespace Tek1
                 Board.Dump("dumping.dmp");
                 TekSolver solver = new TekSolver(Board);
                 solver.SimpleSolve();
+                if (!solver.BruteForceSolve())
+                    MessageBox.Show("can not be solved");
                 Refresh();
                 using (StreamWriter sw = new StreamWriter("solver.dmp"))
                 {
@@ -215,6 +217,12 @@ namespace Tek1
                 }
             }
 
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            Board.ResetValues();
+            Refresh();
         }
     }
 

@@ -272,12 +272,30 @@ namespace Tek1
             return row >= 0 && row < Rows && col >= 0 && col < Cols;
         }
 
+        public void ResetValues()
+        {
+            foreach (TekField field in values)
+                if (!field.initial)
+                    field.Value = 0;
+        }
+
         public void DefineArea(List<TekField> list)
         {
             TekArea result = new TekArea(1 + areas.Count());
             foreach (TekField f in list)
                 result.AddField(f);
             areas.Add(result);
+        }
+
+        public bool IsSolved()
+        {
+            foreach (TekField field in values)
+                if (field.Value == 0)
+                    return false;
+                else foreach (TekField field2 in field.neighbours)
+                        if (field2.Value == field.Value)
+                            return false;
+            return true;
         }
 
         public void Dump(StreamWriter sw)

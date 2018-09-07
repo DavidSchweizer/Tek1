@@ -77,5 +77,28 @@ namespace Tek1
             }
             return result;
         }
+        private void SetFieldValue(TekField field, int value)
+        {
+            field.Value = value;
+            SortFields();
+        }
+        public bool BruteForceSolve()
+        {
+            // note: might be nice to do a SimpleSolve here as well, but 
+            // this gets too complicated for backtracking
+
+            TekField Field0 = SortedFields[0];
+            if (Field0.PossibleValues.Count == 0)
+                return Board.IsSolved();
+            for (int i = 0; i < Field0.PossibleValues.Count; i++)
+            {
+                SetFieldValue(Field0, Field0.PossibleValues[i]);
+                if (BruteForceSolve())
+                    return true;
+                else // backtrack 
+                    SetFieldValue(Field0, 0);
+            } // if we get here, this branch has no solution
+            return false;
+        }
     }
 }
