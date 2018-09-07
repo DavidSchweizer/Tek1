@@ -16,23 +16,69 @@ namespace Tek1
 
     public class TekField
     {
-        public int value;
+        private bool _cascading = false;
+        public int _value;
         public bool initial;
         public TekArea area;
         public List<TekField> neighbours;
+        public List<TekField> influencers;
+        public List<int> PossibleValues;
         private int _row, _col;
         public int Row { get { return _row; } }
         public int Col { get { return _col; } }
 
         public TekField(int arow, int acol)
         {
-            value = 0;
+            _value = 0;
             initial = false;
             _row = arow;
             _col = acol;
             neighbours = new List<TekField>();
+            influencers = new List<TekField>();
+            PossibleValues = new List<int>();
+            for (int i = 1; i <= Const.MAXTEK; i++)
+                PossibleValues.Add(i);
             area = null;
         }
+
+        public int Value { get { return _value;  } set { SetValue(value); } }
+
+        public void SetValue(int avalue)
+        {
+            if (avalue < 0 || avalue > Const.MAXTEK)
+                throw new Exception(String.Format("invalid value in field: {0}", avalue));
+            _value = avalue;
+            UpdatePossibleValues(true);
+        }
+
+        public void UpdatePossibleValues(bool cascade = false)
+        {
+            if (_cascading) // protection against endless loops 
+                return;
+            PossibleValues.Clear();
+            if (Value == 0)
+            {
+                for (int i = 1; i <= ((area == null) ? Const.MAXTEK : area.fields.Count); i++)
+                    PossibleValues.Add(i);
+                foreach (TekField field in influencers)
+                    if (field.Value > 0)
+                        PossibleValues.Remove(field.Value);
+            }
+            if (!cascade)
+                return;
+            _cascading = true;
+            try
+            {
+                foreach (TekField field in influencers)
+                    field.UpdatePossibleValues();
+            }
+            finally
+            {
+                _cascading = false;
+            }
+
+        }
+
         public void AddNeighbour(TekField f)
         {
             if (!neighbours.Contains(f)) // don't add more than once
@@ -44,17 +90,69 @@ namespace Tek1
             return neighbours.Contains(f);
         }
 
-        public string AsString()
+        public void AddInfluencer(TekField f)
         {
-            return String.Format("[{0},{1}:{2}{3}]", Row, Col, value, initial ? "i":"");
+            if (!influencers.Contains(f)) // don't add more than once
+                influencers.Add(f);
         }
 
-        public void Dump(StreamWriter sw)
+        public bool HasInfluencer(TekField f)
         {
-            sw.Write("{0} Neighbours:", AsString());
-            foreach (TekField t in neighbours)
-                sw.Write("{0} ", t.AsString());
-            sw.WriteLine();
+            return influencers.Contains(f);
+        }
+
+        public void SetInfluencers()
+        {
+            influencers.Clear();
+            // add area
+            if (area != null)
+                foreach (TekField field in area.fields)
+                    if (field != this)
+                        AddInfluencer(field);
+            // add neighbours not in area
+            foreach (TekField field in neighbours)
+                AddInfluencer(field);
+        }
+
+
+        public string AsString(bool includeValue = false, bool includeArea=false)
+        {
+            string result = String.Format("[{0},{1}]", Row, Col);
+            if (includeValue)
+                result += String.Format(" value:{0}{1}", Value == 0 ? "-" : Value.ToString(), initial ? "i" : " ");
+            if (includeArea)
+                result += String.Format(" area: {0}", area == null ? "-" : area.AreaNum.ToString());
+            return result;
+        }
+        public const uint FLD_DMP_NEIGHBOURS    = 1;
+        public const uint FLD_DMP_INFLUENCERS   = 2;
+        public const uint FLD_DMP_POSSIBLES     = 4;
+        public const uint FLD_DMP_ALL           = 65535;
+
+        public void Dump(StreamWriter sw, uint flags = FLD_DMP_ALL)
+        {
+            sw.WriteLine("Field {0}", AsString(true, true));
+            if ((flags & FLD_DMP_NEIGHBOURS) != 0)
+            {
+                sw.Write("Neighbours:");
+                foreach (TekField t in neighbours)
+                    sw.Write("{0} ", t.AsString());
+                sw.WriteLine();
+            }
+            if ((flags & FLD_DMP_INFLUENCERS) != 0)
+            {
+                sw.Write("Influencrs:");
+                foreach (TekField t in influencers)
+                    sw.Write("{0} ", t.AsString());
+                sw.WriteLine();
+            }
+            if ((flags & FLD_DMP_POSSIBLES) != 0)
+            {
+                sw.Write("Poss. Vals:");
+                for (int i = 0; i < PossibleValues.Count; i++)
+                    sw.Write("{0} ", PossibleValues[i]);
+                sw.WriteLine();
+            }
         }
     }
 
@@ -87,6 +185,11 @@ namespace Tek1
             return result;
         }
 
+        public void SetInfluencers()
+        {
+            foreach (TekField f in fields)
+                f.SetInfluencers();
+        }
         public void AddField(TekField f)
         {
             if (fields.Contains(f)) // don't add more than once
@@ -95,6 +198,7 @@ namespace Tek1
                 return; // or exception
             fields.Add(f);
             f.area = this;
+            SetInfluencers();            
         }
 
         public bool IsAdjacent()
@@ -187,6 +291,12 @@ namespace Tek1
             {
                 a.Dump(sw);
             }
+        }
+
+        public void Dump(string filename)
+        {
+            using (StreamWriter sw = new StreamWriter(filename))
+                Dump(sw);
         }
 
         public List<string> ValidAreasErrors()
@@ -315,12 +425,18 @@ namespace Tek1
                     ParseError("Invalid value line {0}: ({1},{2}", input, row, col);
                 }
                 TekField field = board.values[row, col];
-                field.value = value;
+                field.Value = value;
                 field.initial = match.Groups["initial"].Value == "i";
                 return true;
             }
             else
                 return false;
+        }
+
+        private void UpdatePossibleValues(TekBoard board)
+        {
+            foreach (TekField field in board.values)
+                field.UpdatePossibleValues(false);
         }
 
         private TekBoard ParseStream(StreamReader sr)
@@ -347,11 +463,15 @@ namespace Tek1
                     }
                 }
             }
+            if (board != null)
+            {
+                UpdatePossibleValues(board);
+            }
             return board;
         }
         private void ExportValue(TekField field, StreamWriter wr)
         {
-            wr.WriteLine(VALUEFORMAT, field.Row, field.Col, field.value, field.initial ? "i" : "");
+            wr.WriteLine(VALUEFORMAT, field.Row, field.Col, field.Value, field.initial ? "i" : "");
         }
 
         private void ExportArea(TekArea area, StreamWriter wr)
@@ -373,7 +493,7 @@ namespace Tek1
             }
             foreach (TekField value in board.values)
             {
-                if (value.value > 0)
+                if (value.Value > 0)
                     ExportValue(value, wr);
             }
         }

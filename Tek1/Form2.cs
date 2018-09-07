@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -136,7 +137,7 @@ namespace Tek1
                     newP.Data = data;
                     newP.Field = Board.values[r, c];
                     newP.Click += new EventHandler(Panel_Click);
-                    newP.KeyDown+= new EventHandler(Panel_KeyDown);
+//                    newP.KeyDown+= new EventHandler(Panel_KeyDown);
                     this.Controls.Add(newP);
                     _Panels[r, c] = newP;
                 }
@@ -198,6 +199,22 @@ namespace Tek1
                         break;
                 }
             }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (Board != null)
+            {
+                Board.Dump("dumping.dmp");
+                TekSolver solver = new TekSolver(Board);
+                solver.SimpleSolve();
+                Refresh();
+                using (StreamWriter sw = new StreamWriter("solver.dmp"))
+                {
+                    solver.Dump(sw);
+                }
+            }
+
         }
     }
 
@@ -265,7 +282,7 @@ namespace Tek1
         private int areaNum;
         public int Row { get { return field == null ? -1 : field.Row; } }
         public int Col { get { return field == null ? -1 : field.Col; } }
-        public int Value { get { return field == null ? 0 : field.value; } set { if (field != null && !field.initial) { field.value = value; Refresh(); } } }
+        public int Value { get { return field == null ? 0 : field.Value; } set { if (field != null && !field.initial) { field.Value = value; Refresh(); } } }
 
 
 
@@ -366,11 +383,11 @@ namespace Tek1
             
             base.OnPaint(e);
 
-            if (Field != null && Field.value > 0)
+            if (Field != null && Field.Value > 0)
             {
                 e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 Data.SetCenterAlignment();
-                e.Graphics.DrawString(Field.value.ToString(), Data.ValueFont[field.initial?1:0], 
+                e.Graphics.DrawString(Field.Value.ToString(), Data.ValueFont[field.initial?1:0], 
                         Data.solidBrush[IsSelected?1:0], Data.ValuePoint, Data.Format);
             }
             DrawBorders(e);
