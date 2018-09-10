@@ -390,15 +390,16 @@ namespace Tek1
         }
 
         private void DrawBorders(PaintEventArgs e)
-        {//tbsNone, tbsInternal, tbsExternal, tbsBoard
+        {
+            //tbsNone, tbsInternal, tbsExternal, tbsBoard
             int[] penSizes = { 0, 1, 2, 1 };
             System.Drawing.Color[] bColors = { Color.White, Color.DarkGray, Color.Black, Color.Black };
             System.Drawing.Color SelectedBorderColor = Color.NavajoWhite;
 
-            int[] X1 = { 0, e.ClipRectangle.Width,  e.ClipRectangle.Width, 0 };
-            int[] X2 = { e.ClipRectangle.Width, e.ClipRectangle.Width, 0, 0 };
-            int[] Y1 = { 0, 0, e.ClipRectangle.Height, e.ClipRectangle.Height  };
-            int[] Y2 = { 0, e.ClipRectangle.Height, e.ClipRectangle.Height, 0};
+            int[] X1 = { 0, e.ClipRectangle.Width-1,  e.ClipRectangle.Width-1, 0 };
+            int[] X2 = { e.ClipRectangle.Width-1, e.ClipRectangle.Width-1, 0, 0 };
+            int[] Y1 = { 0, 0, e.ClipRectangle.Height-1, e.ClipRectangle.Height-1  };
+            int[] Y2 = { 0, e.ClipRectangle.Height-1, e.ClipRectangle.Height-1, 0};
 
             for (int i = (int)TekBorder.bdTop; i < (int)TekBorder.bdLast; i++)
             {
@@ -425,6 +426,17 @@ namespace Tek1
                 
                 e.Graphics.DrawLine(pen, X1[i], Y1[i], X2[i], Y2[i]);
             }
+        }
+
+        private void DrawSingleBorder(PaintEventArgs e, TekBorder border, TekBorderStyle tbs)
+        {
+            //tbsNone, tbsInternal, tbsExternal, tbsBoard
+            int[] penSizes = { 0, 1, 2, 1 };
+            System.Drawing.Color[] bColors = { Color.White, Color.DarkGray, Color.Black, Color.Black };
+            System.Drawing.Color SelectedBorderColor = Color.NavajoWhite;
+            System.Drawing.Color color = bColors[(int)border];
+            int pensize = penSizes[(int)border];
+
         }
 
         protected override void OnPaint(PaintEventArgs e)
