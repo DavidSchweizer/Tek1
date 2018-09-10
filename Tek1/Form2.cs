@@ -14,133 +14,17 @@ namespace Tek1
 
     public partial class Form2 : Form
     {
-        private TekPanel[,] _Panels = null;
-
-        private TekPanelData data = new TekPanelData();
-
-        private TekBoard board = null;
+        TekBoardPanel P;
 
         public Form2()
         {
             InitializeComponent();
-        }
-
-        public TekBoard Board { get { return board; } set { SetBoard(value); } }
-
-        private void Panel_Click(object sender, EventArgs e)
-        {
-            if (Board == null)
-                return;
-            if (sender is TekPanel)
-            {
-                TekPanel panel = sender as TekPanel;
-                panel.SelectPanel(!panel.IsSelected);
-            }
-        }
-
-        private void SetBorders()
-        {
-            if (Board == null || _Panels == null)
-                return;
-            int area = Board.values[0, 0].area.AreaNum;
-            for (int r = 0; r < Board.Rows; r++)
-                for (int c = 0; c < Board.Cols; c++)
-                {
-                    TekPanel p = _Panels[r, c];
-                    if (r == 0)
-                        p.Borders[(int)TekPanel.TekBorder.bdTop] = TekPanel.TekBorderStyle.tbsBoard;
-                    else
-                    {
-                        TekField f2 = Board.values[r - 1, c];
-                        if (f2.area.AreaNum == p.Field.area.AreaNum)
-                            p.Borders[(int)TekPanel.TekBorder.bdTop] = TekPanel.TekBorderStyle.tbsInternal;
-                        else
-                            p.Borders[(int)TekPanel.TekBorder.bdTop] = TekPanel.TekBorderStyle.tbsExternal;
-                    }
-                    if (c == 0)
-                        p.Borders[(int)TekPanel.TekBorder.bdLeft] = TekPanel.TekBorderStyle.tbsBoard;
-                    else
-                    {
-                        TekField f2 = Board.values[r, c - 1];
-                        if (f2.area.AreaNum == p.Field.area.AreaNum)
-                            p.Borders[(int)TekPanel.TekBorder.bdLeft] = TekPanel.TekBorderStyle.tbsInternal;
-                        else
-                            p.Borders[(int)TekPanel.TekBorder.bdLeft] = TekPanel.TekBorderStyle.tbsExternal;
-                    }
-                    if (r == Board.Rows - 1)
-                        p.Borders[(int)TekPanel.TekBorder.bdBottom] = TekPanel.TekBorderStyle.tbsBoard;
-                    else
-                    {
-                        TekField f2 = Board.values[r + 1, c];
-                        if (f2.area.AreaNum == p.Field.area.AreaNum)
-                            p.Borders[(int)TekPanel.TekBorder.bdBottom] = TekPanel.TekBorderStyle.tbsInternal;
-                        else
-                            p.Borders[(int)TekPanel.TekBorder.bdBottom] = TekPanel.TekBorderStyle.tbsExternal;
-                    }
-                    if (c == Board.Cols - 1)
-                        p.Borders[(int)TekPanel.TekBorder.bdRight] = TekPanel.TekBorderStyle.tbsBoard;
-                    else
-                    {
-                        TekField f2 = Board.values[r, c + 1];
-                        if (f2.area.AreaNum == p.Field.area.AreaNum)
-                            p.Borders[(int)TekPanel.TekBorder.bdRight] = TekPanel.TekBorderStyle.tbsInternal;
-                        else
-                            p.Borders[(int)TekPanel.TekBorder.bdRight] = TekPanel.TekBorderStyle.tbsExternal;
-                    }
-                }
-        }
-
-        private void SetBoard(TekBoard value)
-        {
-            board = value;
-            TekPanel.SetAreaColors(board);
-            initializePanels();
-            SetBorders();
-        }
-
-        private void removeBoard()
-        {
-            if (_Panels == null)
-                return;
-            for (int r = 0; r < _Panels.GetLength(0); r++)
-                for (int c = 0; c < _Panels.GetLength(1); c++)
-                {
-                    this.Controls.Remove(_Panels[r, c]);
-                    _Panels[r, c] = null;
-                }
-            _Panels = null;
-        }
-
-        private void initializePanels()
-        {
-            const int PADDING = 11;
-            var clr1 = Color.DarkGray;
-            var clr2 = Color.White;
-            Random R = new Random();
-
-            removeBoard();
-            if (Board == null)
-                return;
-
-            data.TileSize = Math.Min((this.ClientRectangle.Width - PADDING) / Board.Cols, (this.ClientRectangle.Height - PADDING) / Board.Rows);
-
-            _Panels = new TekPanel[Board.Rows, Board.Cols];
-
-            for (int r = 0; r < Board.Rows; r++)
-                for (int c = 0; c < Board.Cols; c++)
-                {
-                    TekPanel newP = new TekPanel
-                    {
-                        Size = new Size(data.TileSize, data.TileSize),
-                        Location = new Point(PADDING / 2 + data.TileSize * c, PADDING / 2 + data.TileSize * r)
-                    };
-                    newP.Data = data;
-                    newP.Field = Board.values[r, c];
-                    newP.Click += new EventHandler(Panel_Click);
-//                    newP.KeyDown+= new EventHandler(Panel_KeyDown);
-                    this.Controls.Add(newP);
-                    _Panels[r, c] = newP;
-                }
+            P = new TekBoardPanel();
+            panel1.Controls.Add(P);
+            P.Top = 10;
+            P.Left = 10;
+            P.Width = panel1.ClientRectangle.Width - 20;
+            P.Height = panel1.ClientRectangle.Height - 20;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -159,7 +43,7 @@ namespace Tek1
                 }
                 if (board != null)
                 {
-                    this.Board = board;
+                    this.P.Board = board;
                 }
 
 
@@ -169,12 +53,12 @@ namespace Tek1
         private void button2_Click(object sender, EventArgs e)
         {
             int value = 0;
-            if (TekPanel.SelectedPanel != null && (sender is Button) && Int32.TryParse((sender as Button).Text, out value))
+            if (TekFieldPanel.SelectedPanel != null && (sender is Button) && Int32.TryParse((sender as Button).Text, out value))
             {
-                if (TekPanel.SelectedPanel.Value == value)
-                    TekPanel.SelectedPanel.Value = 0;
+                if (TekFieldPanel.SelectedPanel.Value == value)
+                    TekFieldPanel.SelectedPanel.Value = 0;
                 else
-                    TekPanel.SelectedPanel.Value = value;
+                    TekFieldPanel.SelectedPanel.Value = value;
             }
         }
 
@@ -185,17 +69,17 @@ namespace Tek1
             if (sfd1.ShowDialog() == DialogResult.OK)
             {
                 TekBoardParser tbp = new TekBoardParser();
-                tbp.Export(Board, sfd1.FileName);
+                tbp.Export(P.Board, sfd1.FileName);
             }
         }
         private void Panel_KeyDown(object sender, KeyEventArgs e)
         {
-            if (TekPanel.SelectedPanel != null)
+            if (TekFieldPanel.SelectedPanel != null)
             {
                 switch(e.KeyCode)
                 {
                     case Keys.D1:
-                        TekPanel.SelectedPanel.Value = 1;
+                        TekFieldPanel.SelectedPanel.Value = 1;
                         break;
                 }
             }
@@ -203,10 +87,10 @@ namespace Tek1
 
         private void button8_Click(object sender, EventArgs e)
         {
-            if (Board != null)
+            if (P.Board != null)
             {
-                Board.Dump("dumping.dmp");
-                TekSolver solver = new TekSolver(Board);
+                P.Board.Dump("dumping.dmp");
+                TekSolver solver = new TekSolver(P.Board);
                 solver.SimpleSolve();
                 if (!solver.BruteForceSolve())
                     MessageBox.Show("can not be solved");
@@ -221,7 +105,7 @@ namespace Tek1
 
         private void button9_Click(object sender, EventArgs e)
         {
-            Board.ResetValues();
+            P.Board.ResetValues();
             Refresh();
         }
     }
@@ -265,12 +149,9 @@ namespace Tek1
         }
     }
 
-    class TekPanel : Panel
+    class TekBoardPanel : Panel
     {
-        public enum TekBorder { bdTop, bdRight, bdBottom, bdLeft, bdLast };
-        public enum TekBorderStyle { tbsNone, tbsInternal, tbsExternal, tbsBoard };
-
-        static System.Drawing.Color[] AreaColors = 
+        static System.Drawing.Color[] AreaColors =
             { Color.LightGreen, Color.Orange, Color.LightSkyBlue,
               Color.LightPink, Color.LightYellow, Color.LightSalmon,
               Color.LightGray, Color.Beige, Color.DeepPink
@@ -283,70 +164,92 @@ namespace Tek1
         const int MAXCOLOR = 9;
         static int[] AreaColorIndex = null;
 
-        private TekField field;
-        static public TekPanel SelectedPanel = null;
-        public bool IsSelected { get; set; }
-        private TekPanelData _data;
-        private int areaNum;
-        public int Row { get { return field == null ? -1 : field.Row; } }
-        public int Col { get { return field == null ? -1 : field.Col; } }
-        public int Value { get { return field == null ? 0 : field.Value; } set { if (field != null && !field.initial) { field.Value = value; Refresh(); } } }
+        private TekFieldPanel[,] _Panels = null;
 
+        private TekPanelData data = new TekPanelData();
 
+        private TekBoard board = null;
+        public TekBoard Board { get { return board; } set { SetBoard(value); } }
 
-        public TekBorderStyle[] Borders { get; set; }
-                    
-        public TekPanelData Data { get { return _data; } set { _data = value; this.Refresh(); } }
-
-        public TekPanel() : base()
+        private void SetBoard(TekBoard value)
         {
-            this.SetStyle(ControlStyles.UserPaint, true);
-            Borders = new TekBorderStyle[(int)TekBorder.bdLast];
-            for (int b = 0; b <= (int)TekBorder.bdTop; b++)
-                Borders[b] = TekBorderStyle.tbsNone;
+            board = value;
+            SetAreaColors(board);
+            initializePanels();
+            SetBorders();
         }
 
-        public void SelectPanel(bool onoff=true)
+        private void removeBoard()
         {
-            if (!onoff)
+            if (_Panels == null)
+                return;
+            for (int r = 0; r < _Panels.GetLength(0); r++)
+                for (int c = 0; c < _Panels.GetLength(1); c++)
+                {
+                    this.Controls.Remove(_Panels[r, c]);
+                    _Panels[r, c] = null;
+                }
+            _Panels = null;
+        }
+
+        private void Panel_Click(object sender, EventArgs e)
+        {
+            if (Board == null)
+                return;
+            if (sender is TekFieldPanel)
             {
-                this.BackColor = AreaColors[AreaColorIndex[AreaNum-1]];
-                SelectedPanel = null;
-                IsSelected = false;
+                TekFieldPanel panel = sender as TekFieldPanel;
+                panel.SelectPanel(!panel.IsSelected);
             }
-            else
-            {
-                if (SelectedPanel != null)
-                    SelectedPanel.SelectPanel(false);
-                SelectedPanel = this;
-                IsSelected = true;
-                this.BackColor = SelectedAreaColors[AreaColorIndex[AreaNum-1]];
-            }
-            this.Refresh();            
         }
-        
-        public int AreaNum {  get { return areaNum; } set { areaNum = value; this.BackColor = AreaColors[AreaColorIndex[AreaNum-1]]; } }
 
-        private void SetField(TekField value)
+        private void initializePanels()
         {
-            field = value;
-            AreaNum = field.area.AreaNum;
-            this.Refresh();
+            const int PADDING = 11;
+            var clr1 = Color.DarkGray;
+            var clr2 = Color.White;
+            Random R = new Random();
+
+            removeBoard();
+            if (Board == null)
+                return;
+
+            data.TileSize = Math.Min((this.ClientRectangle.Width - PADDING) / Board.Cols, (this.ClientRectangle.Height - PADDING) / Board.Rows);
+
+            _Panels = new TekFieldPanel[Board.Rows, Board.Cols];
+
+            for (int r = 0; r < Board.Rows; r++)
+                for (int c = 0; c < Board.Cols; c++)
+                {
+                    TekFieldPanel newP = new TekFieldPanel
+                    {
+                        Size = new Size(data.TileSize, data.TileSize),
+                        Location = new Point(PADDING / 2 + data.TileSize * c, PADDING / 2 + data.TileSize * r)
+                    };
+                    newP.Data = data;
+                    newP.Field = Board.values[r, c];
+                    newP.NormalColor = AreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
+                    newP.SelectedColor = SelectedAreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
+                    newP.Click += new EventHandler(Panel_Click);
+                    //                    newP.KeyDown+= new EventHandler(Panel_KeyDown);
+                    this.Controls.Add(newP);
+                    _Panels[r, c] = newP;
+                }
         }
 
-        static public void SetAreaColors(TekBoard board)
+        private void SetAreaColors(TekBoard board)
         {
             AreaColorIndex = new int[board.areas.Count()];
             for (int i = 0; i < AreaColorIndex.Length; i++)
                 AreaColorIndex[i] = -1; // 
             Random R = new Random();
-            foreach(TekArea area in board.areas)
+            foreach (TekArea area in board.areas)
             {
                 List<TekArea> neighbours = area.GetAdjacentAreas();
                 List<int> inUseByNeighbours = new List<int>();
                 foreach (TekArea area2 in neighbours)
-                    if (AreaColorIndex[area2.AreaNum-1] != -1)
-                        inUseByNeighbours.Add(AreaColorIndex[area2.AreaNum-1]);
+                    if (AreaColorIndex[area2.AreaNum] != -1)
+                        inUseByNeighbours.Add(AreaColorIndex[area2.AreaNum]);
                 int index0 = R.Next(MAXCOLOR);
                 int index = (index0 + 1) % MAXCOLOR;
                 while (index != index0)
@@ -356,8 +259,128 @@ namespace Tek1
                     else
                         break;
                 }
-                AreaColorIndex[area.AreaNum-1] = index;
+                AreaColorIndex[area.AreaNum] = index;
             }
+        }
+
+        private void SetBorders()
+        {
+            if (Board == null || _Panels == null)
+                return;
+            int area = Board.values[0, 0].area.AreaNum;
+            for (int r = 0; r < Board.Rows; r++)
+                for (int c = 0; c < Board.Cols; c++)
+                {
+                    TekFieldPanel p = _Panels[r, c];
+                    if (r == 0)
+                        p.Borders[(int)TekFieldPanel.TekBorder.bdTop] = TekFieldPanel.TekBorderStyle.tbsBoard;
+                    else
+                    {
+                        TekField f2 = Board.values[r - 1, c];
+                        if (f2.area.AreaNum == p.Field.area.AreaNum)
+                            p.Borders[(int)TekFieldPanel.TekBorder.bdTop] = TekFieldPanel.TekBorderStyle.tbsInternal;
+                        else
+                            p.Borders[(int)TekFieldPanel.TekBorder.bdTop] = TekFieldPanel.TekBorderStyle.tbsExternal;
+                    }
+                    if (c == 0)
+                        p.Borders[(int)TekFieldPanel.TekBorder.bdLeft] = TekFieldPanel.TekBorderStyle.tbsBoard;
+                    else
+                    {
+                        TekField f2 = Board.values[r, c - 1];
+                        if (f2.area.AreaNum == p.Field.area.AreaNum)
+                            p.Borders[(int)TekFieldPanel.TekBorder.bdLeft] = TekFieldPanel.TekBorderStyle.tbsInternal;
+                        else
+                            p.Borders[(int)TekFieldPanel.TekBorder.bdLeft] = TekFieldPanel.TekBorderStyle.tbsExternal;
+                    }
+                    if (r == Board.Rows - 1)
+                        p.Borders[(int)TekFieldPanel.TekBorder.bdBottom] = TekFieldPanel.TekBorderStyle.tbsBoard;
+                    else
+                    {
+                        TekField f2 = Board.values[r + 1, c];
+                        if (f2.area.AreaNum == p.Field.area.AreaNum)
+                            p.Borders[(int)TekFieldPanel.TekBorder.bdBottom] = TekFieldPanel.TekBorderStyle.tbsInternal;
+                        else
+                            p.Borders[(int)TekFieldPanel.TekBorder.bdBottom] = TekFieldPanel.TekBorderStyle.tbsExternal;
+                    }
+                    if (c == Board.Cols - 1)
+                        p.Borders[(int)TekFieldPanel.TekBorder.bdRight] = TekFieldPanel.TekBorderStyle.tbsBoard;
+                    else
+                    {
+                        TekField f2 = Board.values[r, c + 1];
+                        if (f2.area.AreaNum == p.Field.area.AreaNum)
+                            p.Borders[(int)TekFieldPanel.TekBorder.bdRight] = TekFieldPanel.TekBorderStyle.tbsInternal;
+                        else
+                            p.Borders[(int)TekFieldPanel.TekBorder.bdRight] = TekFieldPanel.TekBorderStyle.tbsExternal;
+                    }
+                }
+        }
+    }
+
+    class TekFieldPanel : Panel
+    {
+        public enum TekBorder { bdTop, bdRight, bdBottom, bdLeft, bdLast };
+        public enum TekBorderStyle { tbsNone, tbsInternal, tbsExternal, tbsBoard };
+
+        private System.Drawing.Color _NormalColor;
+        public System.Drawing.Color NormalColor
+        {
+            get { return _NormalColor; }
+            set { _NormalColor = value; if (!IsSelected) BackColor = value; }
+        }
+
+        private System.Drawing.Color _SelectedColor;
+        public System.Drawing.Color SelectedColor 
+        {
+            get { return _SelectedColor; }
+            set { _SelectedColor = value; if (IsSelected) BackColor = value; }
+        }
+
+        private TekField field;
+        static public TekFieldPanel SelectedPanel = null;
+        public bool IsSelected { get; set; }
+        private TekPanelData _data;
+        
+        public int Row { get { return field == null ? -1 : field.Row; } }
+        public int Col { get { return field == null ? -1 : field.Col; } }
+        public int Value { get { return field == null ? 0 : field.Value; } set { if (field != null && !field.initial) { field.Value = value; Refresh(); } } }
+
+        public TekBorderStyle[] Borders { get; set; }
+                    
+        public TekPanelData Data { get { return _data; } set { _data = value; this.Refresh(); } }
+
+        public TekFieldPanel() : base()
+        {
+            this.SetStyle(ControlStyles.UserPaint, true);
+            Borders = new TekBorderStyle[(int)TekBorder.bdLast];
+            for (int b = 0; b <= (int)TekBorder.bdTop; b++)
+                Borders[b] = TekBorderStyle.tbsNone;
+            NormalColor = Color.AliceBlue;
+            SelectedColor = Color.YellowGreen;
+        }
+
+        public void SelectPanel(bool onoff=true)
+        {
+            if (!onoff)
+            {
+                this.BackColor = NormalColor;
+                SelectedPanel = null;
+                IsSelected = false;
+            }
+            else
+            {
+                if (SelectedPanel != null)
+                    SelectedPanel.SelectPanel(false);
+                SelectedPanel = this;
+                IsSelected = true;
+                this.BackColor = SelectedColor;
+            }
+            this.Refresh();            
+        }
+        
+        private void SetField(TekField value)
+        {
+            field = value;
+            this.Refresh();
         }
 
         public TekField Field
@@ -370,7 +393,7 @@ namespace Tek1
         {//tbsNone, tbsInternal, tbsExternal, tbsBoard
             int[] penSizes = { 0, 1, 2, 1 };
             System.Drawing.Color[] bColors = { Color.White, Color.DarkGray, Color.Black, Color.Black };
-            System.Drawing.Color SelectedColor = Color.NavajoWhite;
+            System.Drawing.Color SelectedBorderColor = Color.NavajoWhite;
 
             int[] X1 = { 0, e.ClipRectangle.Width - 1, e.ClipRectangle.Width - 1, 0 };
             int[] X2 = { e.ClipRectangle.Width - 1, e.ClipRectangle.Width - 1, 0, 0 };
@@ -380,7 +403,7 @@ namespace Tek1
             for (int i = (int)TekBorder.bdTop; i < (int)TekBorder.bdLast; i++)
                 e.Graphics.DrawLine(
                     new Pen(
-                        new SolidBrush(IsSelected ? SelectedColor : bColors[(int)Borders[i]]),
+                        new SolidBrush(IsSelected ? SelectedBorderColor : bColors[(int)Borders[i]]),
                         IsSelected ? 3 : penSizes[(int)Borders[i]]),
                     X1[i], Y1[i], X2[i], Y2[i]
                     );

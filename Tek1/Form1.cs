@@ -41,9 +41,6 @@ namespace Tek1
                     foreach (string s in errors)
                         listBox1.Items.Add(s);
                 }
-                Form2 form2 = new Form2();
-                form2.Board = board;
-                form2.Show();
             }
             
             

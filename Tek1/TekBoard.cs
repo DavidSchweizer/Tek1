@@ -281,7 +281,7 @@ namespace Tek1
 
         public void DefineArea(List<TekField> list)
         {
-            TekArea result = new TekArea(1 + areas.Count());
+            TekArea result = new TekArea(areas.Count());
             foreach (TekField f in list)
                 result.AddField(f);
             areas.Add(result);
