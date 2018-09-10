@@ -391,52 +391,49 @@ namespace Tek1
 
         private void DrawBorders(PaintEventArgs e)
         {
-            //tbsNone, tbsInternal, tbsExternal, tbsBoard
-            int[] penSizes = { 0, 1, 2, 1 };
-            System.Drawing.Color[] bColors = { Color.White, Color.DarkGray, Color.Black, Color.Black };
-            System.Drawing.Color SelectedBorderColor = Color.NavajoWhite;
+            DrawBorderType(e, TekBorderStyle.tbsInternal);
+            DrawBorderType(e, TekBorderStyle.tbsExternal);
+            DrawBorderType(e, TekBorderStyle.tbsBoard);
+        }
 
-            int[] X1 = { 0, e.ClipRectangle.Width-1,  e.ClipRectangle.Width-1, 0 };
-            int[] X2 = { e.ClipRectangle.Width-1, e.ClipRectangle.Width-1, 0, 0 };
-            int[] Y1 = { 0, 0, e.ClipRectangle.Height-1, e.ClipRectangle.Height-1  };
-            int[] Y2 = { 0, e.ClipRectangle.Height-1, e.ClipRectangle.Height-1, 0};
-
-            for (int i = (int)TekBorder.bdTop; i < (int)TekBorder.bdLast; i++)
+        private void DrawBorderType(PaintEventArgs e, TekBorderStyle BS)
+        {
+            for (TekBorder border = TekBorder.bdTop; border < TekBorder.bdLast; border++)
             {
-                int ps = penSizes[(int)Borders[i]];
-                Pen pen = new Pen(
-                    new SolidBrush(bColors[(int)Borders[i]]), ps
-                    );
-                if (ps > 1)
-                {
-                    ps = ps / 2;
-                    if (i == (int)TekBorder.bdTop)
-                    {
-                        Y1[i] += ps; Y2[i] += ps;
-                    }
-                    if (i == (int)TekBorder.bdLeft)
-                    {
-                        X1[i] += ps; X2[i] += ps;
-                    }
-                }
-//                Pen pen = new Pen(
- //                       new SolidBrush(IsSelected ? SelectedBorderColor : bColors[(int)Borders[i]]),
-  //                      IsSelected ? 3 : penSizes[(int)Borders[i]]);
-               //pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Left;
-                
-                e.Graphics.DrawLine(pen, X1[i], Y1[i], X2[i], Y2[i]);
+                if (Borders[(int)border] == BS)
+                    DrawSingleBorder(e, border, BS);
             }
         }
 
-        private void DrawSingleBorder(PaintEventArgs e, TekBorder border, TekBorderStyle tbs)
+        private void DrawSingleBorder(PaintEventArgs e, TekBorder border, TekBorderStyle BS)
         {
             //tbsNone, tbsInternal, tbsExternal, tbsBoard
-            int[] penSizes = { 0, 1, 2, 1 };
+            int[] penSizes = { 0, 1, 1, 1 };
+            int iBS = (int)BS;
+            int iBorder = (int)border;
             System.Drawing.Color[] bColors = { Color.White, Color.DarkGray, Color.Black, Color.Black };
-            System.Drawing.Color SelectedBorderColor = Color.NavajoWhite;
-            System.Drawing.Color color = bColors[(int)border];
-            int pensize = penSizes[(int)border];
 
+            int pensize = penSizes[iBS];
+
+
+            int[] X1 = { 0, e.ClipRectangle.Width - 1, e.ClipRectangle.Width - 1, 0 };
+            int[] X2 = { e.ClipRectangle.Width - 1, e.ClipRectangle.Width - 1, 0, 0 };
+            int[] Y1 = { 0, 0, e.ClipRectangle.Height - 1, e.ClipRectangle.Height - 1 };
+            int[] Y2 = { 0, e.ClipRectangle.Height - 1, e.ClipRectangle.Height - 1, 0 };
+            if (pensize > 1)
+            {
+                int pensize2 = pensize / 2;
+                switch (border)
+                {
+                     case TekBorder.bdTop:
+                        Y1[iBorder] += pensize2; Y2[iBorder] += pensize2;
+                        break;
+                    case TekBorder.bdLeft: 
+                         X1[iBorder] += pensize2; X2[iBorder] += pensize2;
+                        break;
+                }               
+            }
+            e.Graphics.DrawLine(new Pen(new SolidBrush(bColors[iBS]), pensize), X1[iBorder], Y1[iBorder], X2[iBorder], Y2[iBorder]);
         }
 
         protected override void OnPaint(PaintEventArgs e)
