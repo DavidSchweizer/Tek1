@@ -266,6 +266,22 @@ namespace Tek1
                     }
                 }
         }
+        
+        public int[,] CopyValues()
+        {
+            int[,] result = new int[Rows, Cols];
+            for (int r = 0; r < Rows; r++)
+                for (int c = 0; c < Cols; c++)
+                    result[r, c] = values[r, c].Value;
+            return result;
+        }
+
+        public void LoadValues(int[,] newValues)
+        {
+            for (int r = 0; r < Rows; r++)
+                for (int c = 0; c < Cols; c++)
+                    values[r, c].Value = newValues[r, c];
+        }
 
         public bool IsInRange(int row, int col)
         {

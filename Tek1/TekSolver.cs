@@ -33,12 +33,24 @@ namespace Tek1
 
         private List<TekField> SortedFields;
         private TekFieldComparer sorter;
+        private Stack<int[,]> _stack;
         
         public TekSolver(TekBoard board)
         {
             SortedFields = new List<TekField>();
             sorter = new TekFieldComparer();
             Board = board;
+            _stack = new Stack<int[,]>();
+        }
+
+        public void PushState()
+        {
+            _stack.Push(Board.CopyValues());
+        }
+
+        public void PopState()
+        {
+            Board.LoadValues(_stack.Pop());
         }
 
         private void SetBoard(TekBoard aboard)
@@ -64,6 +76,11 @@ namespace Tek1
                 field.Dump(sw, TekField.FLD_DMP_POSSIBLES);
         }
 
+        private void SetFieldValue(TekField field, int value)
+        {
+            field.Value = value;
+            SortFields();
+        }
         public bool SimpleSolve()
         {
             bool result = false;
@@ -75,19 +92,13 @@ namespace Tek1
                     SortedFields[i].Value = SortedFields[i].PossibleValues[0];
                 SortFields();
             }
-            return result;
-        }
-        private void SetFieldValue(TekField field, int value)
-        {
-            field.Value = value;
-            SortFields();
+            return result && Board.IsSolved();
         }
         public bool BruteForceSolve()
         {
-            // note: might be nice to do a SimpleSolve here as well, but 
-            // this gets too complicated for backtracking
 
             TekField Field0 = SortedFields[0];
+
             if (Field0.PossibleValues.Count == 0)
                 return Board.IsSolved();
             for (int i = 0; i < Field0.PossibleValues.Count; i++)
@@ -99,6 +110,15 @@ namespace Tek1
                     SetFieldValue(Field0, 0);
             } // if we get here, this branch has no solution
             return false;
+        }
+        public bool Solve()
+        {
+            bool result = false;
+            while (!result)
+            {
+                result = SimpleSolve() || BruteForceSolve();
+            }
+            return result;
         }
     }
 }

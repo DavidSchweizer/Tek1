@@ -27,7 +27,7 @@ namespace Tek1
             P.Height = panel1.ClientRectangle.Height - 20;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void bLoad_Click(object sender, EventArgs e)
         {
             if (ofd1.ShowDialog() == DialogResult.OK)
             {
@@ -62,7 +62,7 @@ namespace Tek1
             }
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void bSave_Click(object sender, EventArgs e)
         {
             sfd1.FileName = ofd1.FileName;
             sfd1.InitialDirectory = ofd1.InitialDirectory;
@@ -85,14 +85,13 @@ namespace Tek1
             }
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void bSolveClick(object sender, EventArgs e)
         {
             if (P.Board != null)
             {
                 P.Board.Dump("dumping.dmp");
                 TekSolver solver = new TekSolver(P.Board);
-                solver.SimpleSolve();
-                if (!solver.BruteForceSolve())
+                if (!solver.Solve())
                     MessageBox.Show("can not be solved");
                 Refresh();
                 using (StreamWriter sw = new StreamWriter("solver.dmp"))
@@ -103,7 +102,7 @@ namespace Tek1
 
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void bReset_Click(object sender, EventArgs e)
         {
             P.Board.ResetValues();
             Refresh();
@@ -174,6 +173,7 @@ namespace Tek1
         private void SetBoard(TekBoard value)
         {
             board = value;
+            BackColor = System.Drawing.Color.CadetBlue;
             SetAreaColors(board);
             initializePanels();
             SetBorders();
@@ -356,7 +356,7 @@ namespace Tek1
                 Borders[b] = TekBorderStyle.tbsNone;
             NormalColor = Color.AliceBlue;
             SelectedColor = Color.YellowGreen;
-        }
+         }
 
         public void SelectPanel(bool onoff=true)
         {
@@ -395,18 +395,36 @@ namespace Tek1
             System.Drawing.Color[] bColors = { Color.White, Color.DarkGray, Color.Black, Color.Black };
             System.Drawing.Color SelectedBorderColor = Color.NavajoWhite;
 
-            int[] X1 = { 0, e.ClipRectangle.Width - 1, e.ClipRectangle.Width - 1, 0 };
-            int[] X2 = { e.ClipRectangle.Width - 1, e.ClipRectangle.Width - 1, 0, 0 };
-            int[] Y1 = { 0, 0, e.ClipRectangle.Height - 1, e.ClipRectangle.Height - 1 };
-            int[] Y2 = { 0, e.ClipRectangle.Height - 1, e.ClipRectangle.Height - 1, 0};
+            int[] X1 = { 0, e.ClipRectangle.Width,  e.ClipRectangle.Width, 0 };
+            int[] X2 = { e.ClipRectangle.Width, e.ClipRectangle.Width, 0, 0 };
+            int[] Y1 = { 0, 0, e.ClipRectangle.Height, e.ClipRectangle.Height  };
+            int[] Y2 = { 0, e.ClipRectangle.Height, e.ClipRectangle.Height, 0};
 
             for (int i = (int)TekBorder.bdTop; i < (int)TekBorder.bdLast; i++)
-                e.Graphics.DrawLine(
-                    new Pen(
-                        new SolidBrush(IsSelected ? SelectedBorderColor : bColors[(int)Borders[i]]),
-                        IsSelected ? 3 : penSizes[(int)Borders[i]]),
-                    X1[i], Y1[i], X2[i], Y2[i]
+            {
+                int ps = penSizes[(int)Borders[i]];
+                Pen pen = new Pen(
+                    new SolidBrush(bColors[(int)Borders[i]]), ps
                     );
+                if (ps > 1)
+                {
+                    ps = ps / 2;
+                    if (i == (int)TekBorder.bdTop)
+                    {
+                        Y1[i] += ps; Y2[i] += ps;
+                    }
+                    if (i == (int)TekBorder.bdLeft)
+                    {
+                        X1[i] += ps; X2[i] += ps;
+                    }
+                }
+//                Pen pen = new Pen(
+ //                       new SolidBrush(IsSelected ? SelectedBorderColor : bColors[(int)Borders[i]]),
+  //                      IsSelected ? 3 : penSizes[(int)Borders[i]]);
+               //pen.Alignment = System.Drawing.Drawing2D.PenAlignment.Left;
+                
+                e.Graphics.DrawLine(pen, X1[i], Y1[i], X2[i], Y2[i]);
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)

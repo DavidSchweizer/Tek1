@@ -28,18 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.ofd1 = new System.Windows.Forms.OpenFileDialog();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.sfd1 = new System.Windows.Forms.SaveFileDialog();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.bReset = new System.Windows.Forms.Button();
+            this.bSolve = new System.Windows.Forms.Button();
+            this.bSave = new System.Windows.Forms.Button();
+            this.bLoad = new System.Windows.Forms.Button();
+            this.ttSolve = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // button2
@@ -110,54 +112,10 @@
             this.ofd1.InitialDirectory = "U:\\repos\\Tek1\\Tek1\\bin\\Debug\\";
             this.ofd1.Title = "Open TEK file";
             // 
-            // button7
-            // 
-            this.button7.BackgroundImage = global::Tek1.Properties.Resources.save2;
-            this.button7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button7.Location = new System.Drawing.Point(657, 85);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(43, 43);
-            this.button7.TabIndex = 6;
-            this.button7.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
-            // 
-            // button1
-            // 
-            this.button1.BackgroundImage = global::Tek1.Properties.Resources.opentje;
-            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button1.Location = new System.Drawing.Point(657, 25);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(43, 43);
-            this.button1.TabIndex = 0;
-            this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // sfd1
             // 
             this.sfd1.CreatePrompt = true;
             this.sfd1.DefaultExt = "tx";
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(699, 198);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(54, 43);
-            this.button8.TabIndex = 7;
-            this.button8.Text = "button8";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // button9
-            // 
-            this.button9.Location = new System.Drawing.Point(607, 265);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(75, 34);
-            this.button9.TabIndex = 8;
-            this.button9.Text = "button9";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // panel1
             // 
@@ -166,21 +124,72 @@
             this.panel1.Size = new System.Drawing.Size(421, 396);
             this.panel1.TabIndex = 9;
             // 
+            // bReset
+            // 
+            this.bReset.BackgroundImage = global::Tek1.Properties.Resources.reset1;
+            this.bReset.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.bReset.Location = new System.Drawing.Point(561, 353);
+            this.bReset.Name = "bReset";
+            this.bReset.Size = new System.Drawing.Size(54, 54);
+            this.bReset.TabIndex = 8;
+            this.ttSolve.SetToolTip(this.bReset, "Reset the puzzle");
+            this.bReset.UseCompatibleTextRendering = true;
+            this.bReset.UseVisualStyleBackColor = true;
+            this.bReset.Click += new System.EventHandler(this.bReset_Click);
+            // 
+            // bSolve
+            // 
+            this.bSolve.BackgroundImage = global::Tek1.Properties.Resources.solve;
+            this.bSolve.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.bSolve.Location = new System.Drawing.Point(501, 353);
+            this.bSolve.Name = "bSolve";
+            this.bSolve.Size = new System.Drawing.Size(54, 54);
+            this.bSolve.TabIndex = 7;
+            this.ttSolve.SetToolTip(this.bSolve, "Solve the puzzle");
+            this.bSolve.UseVisualStyleBackColor = true;
+            this.bSolve.Click += new System.EventHandler(this.bSolveClick);
+            // 
+            // bSave
+            // 
+            this.bSave.BackgroundImage = global::Tek1.Properties.Resources.save_new;
+            this.bSave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bSave.Location = new System.Drawing.Point(745, 353);
+            this.bSave.Name = "bSave";
+            this.bSave.Size = new System.Drawing.Size(43, 43);
+            this.bSave.TabIndex = 6;
+            this.bSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.ttSolve.SetToolTip(this.bSave, "Save the current state to a file");
+            this.bSave.UseVisualStyleBackColor = true;
+            this.bSave.Click += new System.EventHandler(this.bSave_Click);
+            // 
+            // bLoad
+            // 
+            this.bLoad.BackgroundImage = global::Tek1.Properties.Resources.open_new;
+            this.bLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bLoad.Location = new System.Drawing.Point(696, 353);
+            this.bLoad.Name = "bLoad";
+            this.bLoad.Size = new System.Drawing.Size(43, 43);
+            this.bLoad.TabIndex = 0;
+            this.bLoad.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.ttSolve.SetToolTip(this.bLoad, "Load a new puzzle from a file");
+            this.bLoad.UseVisualStyleBackColor = true;
+            this.bLoad.Click += new System.EventHandler(this.bLoad_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.button9);
-            this.Controls.Add(this.button8);
-            this.Controls.Add(this.button7);
+            this.Controls.Add(this.bReset);
+            this.Controls.Add(this.bSolve);
+            this.Controls.Add(this.bSave);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.bLoad);
             this.Name = "Form2";
             this.Text = "Form2";
             this.ResumeLayout(false);
@@ -189,17 +198,18 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button bLoad;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.OpenFileDialog ofd1;
-        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button bSave;
         private System.Windows.Forms.SaveFileDialog sfd1;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button bSolve;
+        private System.Windows.Forms.Button bReset;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolTip ttSolve;
     }
 }
