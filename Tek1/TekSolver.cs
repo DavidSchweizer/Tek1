@@ -26,6 +26,88 @@ namespace Tek1
         }
     }
 
+    class TekSolverNotes
+    {
+        private TekBoard board;
+        public TekBoard Board { get { return board; }}
+        private List<int>[,] _notes; // possible values per field
+        public List<int> GetNotes(int row, int col) { return _notes[row, col]; }
+        public void SetNotes(int row, int col, int value, bool onoff = true)
+        {
+            if (value >= 1 && value <= Const.MAXTEK)
+            {
+                if (onoff)
+                    _notes[row, col].Add(value);
+                else
+                    _notes[row, col].Remove(value);
+            }
+        }
+        public TekSolverNotes(TekBoard aboard)
+        {
+            SetBoard(aboard);
+        }
+
+        public void SetDefaultNotes()
+        {
+            if (Board == null)
+                return;
+            for (int row = 0; row < Board.Rows; row++)
+                for (int col = 0; col < Board.Cols; col++)
+                {
+                    _notes[row, col].Clear();
+                    foreach (int value in Board.values[row, col].PossibleValues)
+                        SetNotes(row, col, value, true);
+                }
+        }
+        public void ClearNotes()
+        {
+            if (Board == null)
+                return;
+            for (int row = 0; row < Board.Rows; row++)
+                for (int col = 0; col < Board.Cols; col++)
+                {
+                    _notes[row, col].Clear();
+
+                }
+        }
+        public void ClearNotes(int row, int col)
+        {
+            if (Board == null)
+                return;
+            if (row >= 0 && row < Board.Rows && col >= 0 && col < Board.Cols)
+                _notes[row, col].Clear();
+        }
+        private void SetBoard(TekBoard aboard)
+        {
+            board = aboard;
+
+            if (Board != null)
+            {
+                _notes = new List<int>[Board.Rows, Board.Cols];
+                for (int row = 0; row < Board.Rows; row++)
+                    for (int col = 0; col < Board.Cols; col++)
+                        _notes[row, col] = new List<int>();
+            }
+        }
+        public void Dump(StreamWriter sw)
+        {
+            sw.WriteLine("notes:");
+            for (int row = 0; row < Board.Rows; row++)
+                for (int col = 0; col < Board.Cols; col++)
+                {
+                    List<int> notes = GetNotes(row, col);
+                    if (notes.Count > 0)
+                    {
+                        TekField field = Board.values[row, col];
+                        sw.Write("{0}: ", field.AsString());
+                        foreach (int value in notes)
+                        sw.Write("{0} ", value);
+                        sw.WriteLine();
+                    }
+                }
+        }
+    }
+
     class TekSolver
     {
         private TekBoard board;
@@ -34,7 +116,7 @@ namespace Tek1
         private List<TekField> SortedFields;
         private TekFieldComparer sorter;
         private Stack<int[,]> _stack;
-        
+
         public TekSolver(TekBoard board)
         {
             SortedFields = new List<TekField>();
@@ -56,24 +138,28 @@ namespace Tek1
         private void SetBoard(TekBoard aboard)
         {
             board = aboard;
+            
             SortedFields.Clear();
             if (Board != null)
             {
                 foreach (TekField field in Board.values)
                     SortedFields.Add(field);
             }
-            SortFields();            
+            SortFields();          
         }
 
         public void SortFields()
         {
             SortedFields.Sort(sorter);
         }
+
         public void Dump(StreamWriter sw)
         {
             sw.WriteLine("sorted fields:");
             foreach (TekField field in SortedFields)
-                field.Dump(sw, TekField.FLD_DMP_POSSIBLES);
+            {
+                field.Dump(sw, TekField.FLD_DMP_POSSIBLES);                                
+            }
         }
 
         private void SetFieldValue(TekField field, int value)

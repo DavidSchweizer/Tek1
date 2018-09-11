@@ -89,8 +89,15 @@ namespace Tek1
         {
             if (P.Board != null)
             {
+               
                 P.Board.Dump("dumping.dmp");
                 TekSolver solver = new TekSolver(P.Board);
+                TekSolverNotes notes = new TekSolverNotes(P.Board);
+                notes.SetDefaultNotes();
+                using (StreamWriter sw = new StreamWriter("notes.dmp"))
+                {
+                    notes.Dump(sw);
+                }
                 if (!solver.Solve())
                     MessageBox.Show("can not be solved");
                 Refresh();
@@ -112,33 +119,55 @@ namespace Tek1
     class TekPanelData
     {
         const int MAXTILESIZE = 60;
-        FontFamily fontFamily = new FontFamily("Arial");
+        FontFamily fontFamily = new FontFamily("Calibri");
         int FontSize;
+        int FontSize2;
         public Font[] ValueFont;
         public SolidBrush[] solidBrush;
         public Point ValuePoint;
+        public Point[] NotePoint;
         private StringFormat format = new StringFormat();
         public StringFormat Format { get { return format; } }
 
         private int _tileSize;
         public int TileSize { get { return _tileSize; } set { SetTileSize(value); } }
+
+        public const int FONT_NORMAL   = 0;
+        public const int FONT_INITIAL  = 1;
+        public const int FONT_NOTE     = 2;
+
+        public const int PANEL_NORMAL = 0;
+        public const int PANEL_SELECTED = 1;
+       
         public void SetTileSize(int value)
-        {
-            
+        {            
             if (value > MAXTILESIZE)
                 _tileSize = MAXTILESIZE;
             else
                 _tileSize = value;
             FontSize = Convert.ToInt32(TileSize * 0.7);
-            ValueFont = new Font[2];
-            ValueFont[0] = 
+            FontSize2 = Convert.ToInt32(FontSize / 2.5);
+            ValueFont = new Font[3];
+            ValueFont[FONT_NORMAL] = 
                 new Font(fontFamily, FontSize, FontStyle.Regular, GraphicsUnit.Pixel);
-            ValueFont[1] =
+            ValueFont[FONT_INITIAL] =
                 new Font(fontFamily, FontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+            ValueFont[FONT_NOTE] =
+                new Font(fontFamily, FontSize2, FontStyle.Regular, GraphicsUnit.Pixel);
             solidBrush = new SolidBrush[2];
-            solidBrush[0] = new SolidBrush(Color.Black);
-            solidBrush[1] = new SolidBrush(Color.White);
+            solidBrush[PANEL_NORMAL] = new SolidBrush(Color.Black);
+            solidBrush[PANEL_SELECTED] = new SolidBrush(Color.White);
+
             ValuePoint = new Point(TileSize / 2, TileSize / 2);
+
+            NotePoint = new Point[Const.MAXTEK];
+            int d = TileSize / 5;
+            NotePoint[0] = new Point(d, d);
+            NotePoint[1] = new Point(TileSize - d, d);
+            NotePoint[2] = new Point(TileSize / 2, TileSize / 2);
+            NotePoint[3] = new Point(d, TileSize - d);
+            NotePoint[4] = new Point(TileSize - d, TileSize - d);
+
         }
 
         public void SetCenterAlignment()
@@ -169,12 +198,15 @@ namespace Tek1
 
         private TekBoard board = null;
         public TekBoard Board { get { return board; } set { SetBoard(value); } }
-
+        private TekSolverNotes _notes;
+        public TekSolverNotes Notes { get { return _notes; } }
         private void SetBoard(TekBoard value)
         {
             board = value;
+            _notes = new TekSolverNotes(value);
             SetAreaColors(board);
             initializePanels();
+            _notes.SetDefaultNotes();
             SetBorders();
         }
 
@@ -227,6 +259,7 @@ namespace Tek1
                     };
                     newP.Data = data;
                     newP.Field = Board.values[r, c];
+                    newP.Notes = Notes.GetNotes(r, c);
                     newP.NormalColor = AreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
                     newP.SelectedColor = SelectedAreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
                     newP.Click += new EventHandler(Panel_Click);
@@ -340,6 +373,8 @@ namespace Tek1
         static public TekFieldPanel SelectedPanel = null;
         public bool IsSelected { get; set; }
         private TekPanelData _data;
+        private List <int>_notes;
+        public List<int> Notes {  get { return _notes;  } set { _notes = value; } }
         
         public int Row { get { return field == null ? -1 : field.Row; } }
         public int Col { get { return field == null ? -1 : field.Col; } }
@@ -361,6 +396,8 @@ namespace Tek1
 
         public void SelectPanel(bool onoff=true)
         {
+            if (Field != null && Field.initial)
+                return;
             if (!onoff)
             {
                 this.BackColor = NormalColor;
@@ -381,6 +418,7 @@ namespace Tek1
         private void SetField(TekField value)
         {
             field = value;
+
             this.Refresh();
         }
 
@@ -436,19 +474,42 @@ namespace Tek1
             }
             e.Graphics.DrawLine(new Pen(new SolidBrush(bColors[iBS]), pensize), X1[iBorder], Y1[iBorder], X2[iBorder], Y2[iBorder]);
         }
-
-        protected override void OnPaint(PaintEventArgs e)
+        private void DisplayNote(PaintEventArgs e, int value)
         {
-            
-            base.OnPaint(e);
+            e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+            Data.SetCenterAlignment();
+            e.Graphics.DrawString(value.ToString(),
+                Data.ValueFont[TekPanelData.FONT_NOTE],
+                    Data.solidBrush[IsSelected ? TekPanelData.PANEL_SELECTED : TekPanelData.PANEL_NORMAL],
+                    Data.NotePoint[value-1], Data.Format);
+        }
 
+        private void DisplayNotes(PaintEventArgs e)
+        {
+            if (Field != null && Field.Value == 0 && Notes.Count > 0)
+            {
+                foreach (int value in Notes)
+                    DisplayNote(e, value);
+            }
+        }
+        private void DisplayValue(PaintEventArgs e)
+        {
             if (Field != null && Field.Value > 0)
             {
                 e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 Data.SetCenterAlignment();
-                e.Graphics.DrawString(Field.Value.ToString(), Data.ValueFont[field.initial?1:0], 
-                        Data.solidBrush[IsSelected?1:0], Data.ValuePoint, Data.Format);
+                e.Graphics.DrawString(Field.Value.ToString(),
+                    Data.ValueFont[field.initial ? TekPanelData.FONT_INITIAL : TekPanelData.FONT_NORMAL],
+                        Data.solidBrush[IsSelected ? TekPanelData.PANEL_SELECTED : TekPanelData.PANEL_NORMAL],
+                        Data.ValuePoint, Data.Format);
             }
+
+        }
+        protected override void OnPaint(PaintEventArgs e)
+        {            
+            base.OnPaint(e);
+            DisplayValue(e);
+            DisplayNotes(e);
             DrawBorders(e);
         }
     }
