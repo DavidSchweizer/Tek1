@@ -204,7 +204,7 @@ namespace Tek1
             bool result = false;
             while (!result)
             {
-                if (!SimpleSolve() && !BruteForceSolve())
+                if (!SimpleSolve() && !BruteForceSolve()) // no improvement possible
                     break;
                 result = Board.IsSolved();
             }
