@@ -173,7 +173,6 @@ namespace Tek1
         private void SetBoard(TekBoard value)
         {
             board = value;
-            BackColor = System.Drawing.Color.CadetBlue;
             SetAreaColors(board);
             initializePanels();
             SetBorders();
@@ -205,7 +204,7 @@ namespace Tek1
 
         private void initializePanels()
         {
-            const int PADDING = 11;
+            const int PADDING = 6;
             var clr1 = Color.DarkGray;
             var clr2 = Color.White;
             Random R = new Random();
@@ -235,6 +234,8 @@ namespace Tek1
                     this.Controls.Add(newP);
                     _Panels[r, c] = newP;
                 }
+            this.Width = PADDING + Board.Cols * data.TileSize;
+            this.Height = PADDING + Board.Rows * data.TileSize;
         }
 
         private void SetAreaColors(TekBoard board)
