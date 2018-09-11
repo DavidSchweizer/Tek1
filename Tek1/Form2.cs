@@ -118,6 +118,19 @@ namespace Tek1
             P.Board.ResetValues();
             Refresh();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (P == null || P.Board == null)
+                return;
+            int value = 0;
+            if (TekFieldPanel.SelectedPanel != null && 
+                (sender is Button) && Int32.TryParse((sender as Button).Text, out value))
+            {
+                TekFieldPanel.SelectedPanel.ToggleNote(value);
+            }
+
+        }
     }
 
     class TekPanelData
@@ -210,7 +223,6 @@ namespace Tek1
             _notes = new TekSolverNotes(value);
             SetAreaColors(board);
             initializePanels();
-            _notes.SetDefaultNotes();
             SetBorders();
         }
 
@@ -379,7 +391,14 @@ namespace Tek1
         private TekPanelData _data;
         private List <int>_notes;
         public List<int> Notes {  get { return _notes;  } set { _notes = value; } }
-        
+
+        public void ToggleNote(int value)
+        {
+            if (Notes.Contains(value))
+                Notes.Remove(value);
+            else Notes.Add(value);
+            Refresh();
+        }
         public int Row { get { return field == null ? -1 : field.Row; } }
         public int Col { get { return field == null ? -1 : field.Col; } }
         public int Value { get { return field == null ? 0 : field.Value; } set { if (field != null && !field.initial) { field.Value = value; Refresh(); } } }
