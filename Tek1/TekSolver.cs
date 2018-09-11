@@ -180,11 +180,13 @@ namespace Tek1
             }
             return result && Board.IsSolved();
         }
+        StreamWriter sw = new StreamWriter("debug.log");
         public bool BruteForceSolve()
         {
 
             TekField Field0 = SortedFields[0];
-
+            sw.WriteLine("trying: {0}", Field0.AsString());
+            sw.Flush();
             if (Field0.PossibleValues.Count == 0)
                 return Board.IsSolved();
             for (int i = 0; i < Field0.PossibleValues.Count; i++)
@@ -202,7 +204,9 @@ namespace Tek1
             bool result = false;
             while (!result)
             {
-                result = SimpleSolve() || BruteForceSolve();
+                if (!SimpleSolve() && !BruteForceSolve())
+                    break;
+                result = Board.IsSolved();
             }
             return result;
         }

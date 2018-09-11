@@ -52,6 +52,8 @@ namespace Tek1
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if (P == null || P.Board == null)
+                return;
             int value = 0;
             if (TekFieldPanel.SelectedPanel != null && (sender is Button) && Int32.TryParse((sender as Button).Text, out value))
             {
@@ -64,6 +66,8 @@ namespace Tek1
 
         private void bSave_Click(object sender, EventArgs e)
         {
+            if (P == null || P.Board == null)
+                return;
             sfd1.FileName = ofd1.FileName;
             sfd1.InitialDirectory = ofd1.InitialDirectory;
             if (sfd1.ShowDialog() == DialogResult.OK)
@@ -87,30 +91,30 @@ namespace Tek1
 
         private void bSolveClick(object sender, EventArgs e)
         {
-            if (P.Board != null)
+            if (P == null || P.Board == null)
+                return;
+                         
+            P.Board.Dump("dumping.dmp");
+            TekSolver solver = new TekSolver(P.Board);
+            TekSolverNotes notes = new TekSolverNotes(P.Board);
+            notes.SetDefaultNotes();
+            using (StreamWriter sw = new StreamWriter("notes.dmp"))
             {
-               
-                P.Board.Dump("dumping.dmp");
-                TekSolver solver = new TekSolver(P.Board);
-                TekSolverNotes notes = new TekSolverNotes(P.Board);
-                notes.SetDefaultNotes();
-                using (StreamWriter sw = new StreamWriter("notes.dmp"))
-                {
-                    notes.Dump(sw);
-                }
-                if (!solver.Solve())
-                    MessageBox.Show("can not be solved");
-                Refresh();
-                using (StreamWriter sw = new StreamWriter("solver.dmp"))
-                {
-                    solver.Dump(sw);
-                }
+                notes.Dump(sw);
             }
-
+            if (!solver.Solve())
+                MessageBox.Show("can not be solved");
+            Refresh();
+            using (StreamWriter sw = new StreamWriter("solver.dmp"))
+            {
+                solver.Dump(sw);
+            }            
         }
 
         private void bReset_Click(object sender, EventArgs e)
         {
+            if (P == null || P.Board == null)
+                return;
             P.Board.ResetValues();
             Refresh();
         }
@@ -353,7 +357,7 @@ namespace Tek1
     class TekFieldPanel : Panel
     {
         public enum TekBorder { bdTop, bdRight, bdBottom, bdLeft, bdLast };
-        public enum TekBorderStyle { tbsNone, tbsInternal, tbsExternal, tbsBoard };
+        public enum TekBorderStyle { tbsNone, tbsInternal, tbsExternal, tbsBoard, tbsSelected };
 
         private System.Drawing.Color _NormalColor;
         public System.Drawing.Color NormalColor
@@ -439,18 +443,20 @@ namespace Tek1
         {
             for (TekBorder border = TekBorder.bdTop; border < TekBorder.bdLast; border++)
             {
-                if (Borders[(int)border] == BS)
-                    DrawSingleBorder(e, border, BS);
+                if (IsSelected)
+                    DrawSingleBorder(e, border, TekBorderStyle.tbsSelected);
+                else if (Borders[(int)border] == BS)
+                    DrawSingleBorder(e, border, BS);                   
             }
         }
 
         private void DrawSingleBorder(PaintEventArgs e, TekBorder border, TekBorderStyle BS)
         {
-            //tbsNone, tbsInternal, tbsExternal, tbsBoard
-            int[] penSizes = { 0, 1, 1, 1 };
+            //tbsNone, tbsInternal, tbsExternal, tbsBoard, tbsSelected
+            int[] penSizes = { 0, 1, 1, 1, 1 };
             int iBS = (int)BS;
             int iBorder = (int)border;
-            System.Drawing.Color[] bColors = { Color.White, Color.DarkGray, Color.Black, Color.Black };
+            System.Drawing.Color[] bColors = { Color.White, Color.DarkGray, Color.Black, Color.Black, Color.AntiqueWhite };
 
             int pensize = penSizes[iBS];
 
