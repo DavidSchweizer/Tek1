@@ -23,6 +23,7 @@ namespace Tek1
         public List<TekField> neighbours;
         public List<TekField> influencers;
         public List<int> PossibleValues;
+        public List<int> Notes;
         private int _row, _col;
         public int Row { get { return _row; } }
         public int Col { get { return _col; } }
@@ -38,6 +39,7 @@ namespace Tek1
             PossibleValues = new List<int>();
             for (int i = 1; i <= Const.MAXTEK; i++)
                 PossibleValues.Add(i);
+            Notes = new List<int>();
             area = null;
         }
 
@@ -49,6 +51,28 @@ namespace Tek1
                 throw new Exception(String.Format("invalid value in field: {0}", avalue));
             _value = avalue;
             UpdatePossibleValues(true);
+        }
+
+        public void ToggleNote(int anote)
+        {
+            if (anote < 0 || anote > Const.MAXTEK)
+                throw new Exception(String.Format("invalid note in field: {0}", anote));
+            if (Notes.Contains(anote))
+                Notes.Remove(anote);
+            else
+                Notes.Add(anote);
+        }
+
+        public void SetDefaultNotes()
+        {
+            Notes.Clear();
+            foreach (int value in PossibleValues)
+                ToggleNote(value);
+        }
+
+        public void ClearNotes()
+        {
+            Notes.Clear();
         }
 
         public void UpdatePossibleValues(bool cascade = false)
@@ -127,7 +151,9 @@ namespace Tek1
         public const uint FLD_DMP_NEIGHBOURS    = 1;
         public const uint FLD_DMP_INFLUENCERS   = 2;
         public const uint FLD_DMP_POSSIBLES     = 4;
+        public const uint FLD_DMP_NOTES         = 8;
         public const uint FLD_DMP_ALL           = 65535;
+
 
         public void Dump(StreamWriter sw, uint flags = FLD_DMP_ALL)
         {
@@ -151,6 +177,13 @@ namespace Tek1
                 sw.Write("Poss. Vals:");
                 for (int i = 0; i < PossibleValues.Count; i++)
                     sw.Write("{0} ", PossibleValues[i]);
+                sw.WriteLine();
+            }
+            if ((flags & FLD_DMP_NOTES) != 0)
+            {
+                sw.Write("Notes     :");
+                for (int i = 0; i < Notes.Count; i++)
+                    sw.Write("{0} ", Notes[i]);
                 sw.WriteLine();
             }
         }
@@ -365,12 +398,17 @@ namespace Tek1
         const string VALUEPATTERN = @"value=\((?<row>\d+),(?<col>\d+):(?<value>[1-5])(?<initial>i)?\)";
         const string VALUEFORMAT = @"value=({0},{1}:{2}{3})";
         private Regex valuePattern;
+        const string NOTESPATTERN = @"notes=\((?<row>\d+),(?<col>\d+)\)(?<value>[1-5])+";
+        const string NOTESFORMAT1 = @"notes=({0},{1})";
+        const string NOTESFORMAT2 = @"{0} ";
+        private Regex notesPattern;
 
         public TekBoardParser()
         {
             sizePattern = new Regex(SIZEPATTERN);
             areaPattern = new Regex(AREAPATTERN);
-            valuePattern = new Regex(VALUEPATTERN);         
+            valuePattern = new Regex(VALUEPATTERN);
+            notesPattern = new Regex(NOTESPATTERN);
         }
 
         private void ParseError(string format, params object[] list)
@@ -467,6 +505,33 @@ namespace Tek1
                 return false;
         }
 
+        private bool ParseNotes(string input, TekBoard board)
+        {
+            int row, col, value ;
+            TekField field = null;
+
+            //DIT GAAT NOG NIET GOED komt doordat de match maar 1 waarde oppikt.  
+            //komplikatie is dat de areapattern ook zonder de area= gaat werken. Dat is wel op te lossen
+            //maar niet duiidelijk is hoe.
+            Match match = notesPattern.Match(input);
+            while (match.Success)
+            {
+                if (field == null && Int32.TryParse(match.Groups["row"].Value, out row) &&
+                    Int32.TryParse(match.Groups["col"].Value, out col))
+                {
+                    if (!board.IsInRange(row, col))
+                        ParseError("Invalid field in notes line {0}: ({1},{2})", input, row, col);
+                    field = board.values[row, col];
+                }
+                if (field != null && Int32.TryParse(match.Groups["value"].Value, out value))
+                    field.ToggleNote(value);
+                match = match.NextMatch();
+            }
+            return field != null;
+        }
+
+
+
         private void UpdatePossibleValues(TekBoard board)
         {
             foreach (TekField field in board.values)
@@ -490,7 +555,7 @@ namespace Tek1
                     }
                     else
                     {
-                        if (!(ParseArea(s, board) || ParseValue(s, board)))
+                        if (!(ParseNotes(s, board) || ParseArea(s, board) || ParseValue(s, board)))
                         {
                             ParseError("Error parsing line {0}", s);
                         }
@@ -518,6 +583,16 @@ namespace Tek1
             wr.WriteLine();
         }
 
+        private void ExportNotes(TekField field, StreamWriter wr)
+        {
+            wr.Write(NOTESFORMAT1, field.Row, field.Col);
+            foreach (int value in field.Notes)
+            {
+                wr.Write(NOTESFORMAT2, value);
+            }
+            wr.WriteLine();
+        }
+
         private void _Export(TekBoard board, StreamWriter wr)
         {
             wr.WriteLine(SIZEFORMAT, board.Rows, board.Cols);
@@ -529,6 +604,8 @@ namespace Tek1
             {
                 if (value.Value > 0)
                     ExportValue(value, wr);
+                if (value.Notes.Count > 0)
+                    ExportNotes(value, wr);
             }
         }
     } // TekBoardParser

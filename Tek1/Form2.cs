@@ -96,12 +96,6 @@ namespace Tek1
                          
             P.Board.Dump("dumping.dmp");
             TekSolver solver = new TekSolver(P.Board);
-            TekSolverNotes notes = new TekSolverNotes(P.Board);
-            notes.SetDefaultNotes();
-            using (StreamWriter sw = new StreamWriter("notes.dmp"))
-            {
-                notes.Dump(sw);
-            }
             if (!solver.Solve())
                 MessageBox.Show("can not be solved");
             Refresh();
@@ -215,12 +209,9 @@ namespace Tek1
 
         private TekBoard board = null;
         public TekBoard Board { get { return board; } set { SetBoard(value); } }
-        private TekSolverNotes _notes;
-        public TekSolverNotes Notes { get { return _notes; } }
         private void SetBoard(TekBoard value)
         {
             board = value;
-            _notes = new TekSolverNotes(value);
             SetAreaColors(board);
             initializePanels();
             SetBorders();
@@ -275,7 +266,6 @@ namespace Tek1
                     };
                     newP.Data = data;
                     newP.Field = Board.values[r, c];
-                    newP.Notes = Notes.GetNotes(r, c);
                     newP.NormalColor = AreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
                     newP.SelectedColor = SelectedAreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
                     newP.Click += new EventHandler(Panel_Click);
@@ -389,16 +379,16 @@ namespace Tek1
         static public TekFieldPanel SelectedPanel = null;
         public bool IsSelected { get; set; }
         private TekPanelData _data;
-        private List <int>_notes;
-        public List<int> Notes {  get { return _notes;  } set { _notes = value; } }
 
         public void ToggleNote(int value)
         {
-            if (Notes.Contains(value))
-                Notes.Remove(value);
-            else Notes.Add(value);
-            Refresh();
+            if (field != null)
+            {
+                field.ToggleNote(value);
+                Refresh();
+            }
         }
+
         public int Row { get { return field == null ? -1 : field.Row; } }
         public int Col { get { return field == null ? -1 : field.Col; } }
         public int Value { get { return field == null ? 0 : field.Value; } set { if (field != null && !field.initial) { field.Value = value; Refresh(); } } }
@@ -511,9 +501,9 @@ namespace Tek1
 
         private void DisplayNotes(PaintEventArgs e)
         {
-            if (Field != null && Field.Value == 0 && Notes.Count > 0)
+            if (Field != null && Field.Value == 0 && Field.Notes.Count > 0)
             {
-                foreach (int value in Notes)
+                foreach (int value in Field.Notes)
                     DisplayNote(e, value);
             }
         }
