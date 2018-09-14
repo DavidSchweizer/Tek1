@@ -325,7 +325,10 @@ namespace Tek1
         {
             foreach (TekField field in values)
                 if (!field.initial)
+                {
                     field.Value = 0;
+                    field.Notes.Clear();
+                }
         }
 
         public void DefineArea(List<TekField> list)
@@ -391,24 +394,28 @@ namespace Tek1
         const string SIZEPATTERN = @"size=(?<rows>[1-9]\d*),(?<cols>[1-9]\d*)";
         const string SIZEFORMAT = @"size={0},{1}";
         private Regex sizePattern;
-        const string AREAPATTERN = @"(area=)?(\((?<row>\d+),(?<col>\d+)\))";
+        const string AREAPATTERN1 = @"(area=)(\((?<row>\d+),(?<col>\d+)\))(?<rest>\(.*\))?";
+        const string AREAPATTERN2 = @"(\((?<row>\d+),(?<col>\d+)\))";
         const string AREAFORMAT1 = @"area=";
         const string AREAFORMAT2 = @"({0},{1})";
-        private Regex areaPattern;
+        private Regex areaPattern1, areaPattern2;
         const string VALUEPATTERN = @"value=\((?<row>\d+),(?<col>\d+):(?<value>[1-5])(?<initial>i)?\)";
         const string VALUEFORMAT = @"value=({0},{1}:{2}{3})";
         private Regex valuePattern;
-        const string NOTESPATTERN = @"notes=\((?<row>\d+),(?<col>\d+)\)(?<value>[1-5])+";
+        const string NOTESPATTERN1 = @"notes=\((?<row>\d+),(?<col>\d+)\)(?<value>[1-5])+(?<rest>(.*))?";
+        const string NOTESPATTERN2 = @"(?<value>[1-5])+";
         const string NOTESFORMAT1 = @"notes=({0},{1})";
         const string NOTESFORMAT2 = @"{0} ";
-        private Regex notesPattern;
+        private Regex notesPattern1, notesPattern2;
 
         public TekBoardParser()
         {
             sizePattern = new Regex(SIZEPATTERN);
-            areaPattern = new Regex(AREAPATTERN);
+            areaPattern1 = new Regex(AREAPATTERN1);
+            areaPattern2 = new Regex(AREAPATTERN2);
             valuePattern = new Regex(VALUEPATTERN);
-            notesPattern = new Regex(NOTESPATTERN);
+            notesPattern1 = new Regex(NOTESPATTERN1);
+            notesPattern2 = new Regex(NOTESPATTERN2);
         }
 
         private void ParseError(string format, params object[] list)
@@ -456,22 +463,34 @@ namespace Tek1
             }
         }
 
-        private bool ParseArea(string input, TekBoard board)
+        private bool ParseAreaField(string rowS, string colS, TekBoard board, List<TekField> fields)
         {
             int row, col;
-            
-            List<TekField> fields = new List<TekField>();
-            Match match = areaPattern.Match(input);
-            while (match.Success)
+            if (Int32.TryParse(rowS, out row) && Int32.TryParse(colS, out col))
             {
-                if (Int32.TryParse(match.Groups["row"].Value, out row) &&
-                    Int32.TryParse(match.Groups["col"].Value, out col))
+                if (board.IsInRange(row, col))
                 {
-                    if (!board.IsInRange(row, col))
-                        ParseError("Invalid field in area line {0}: ({1},{2})", input, row, col);
                     fields.Add(board.values[row, col]);
+                    return true;
                 }
-                match = match.NextMatch();
+            }
+            return false;
+        }
+        private bool ParseArea(string input, TekBoard board)
+        {
+            List<TekField> fields = new List<TekField>();
+            Match match = areaPattern1.Match(input);
+            if (match.Success)
+            {
+                if (!ParseAreaField(match.Groups["row"].Value, match.Groups["col"].Value, board, fields))
+                    ParseError("Invalid field in area line {0}: ({1},{2})", input, match.Groups["row"].Value, match.Groups["col"].Value);
+                match = areaPattern2.Match(match.Groups["rest"].Value);
+                while (match.Success)
+                {
+                    if (!ParseAreaField(match.Groups["row"].Value, match.Groups["col"].Value, board, fields))
+                        ParseError("Invalid field in area line {0}: ({1},{2})", input, match.Groups["row"].Value, match.Groups["col"].Value);
+                    match = match.NextMatch();
+                }
             }
             if (fields.Count > 0)
             {
@@ -510,11 +529,8 @@ namespace Tek1
             int row, col, value ;
             TekField field = null;
 
-            //DIT GAAT NOG NIET GOED komt doordat de match maar 1 waarde oppikt.  
-            //komplikatie is dat de areapattern ook zonder de area= gaat werken. Dat is wel op te lossen
-            //maar niet duiidelijk is hoe.
-            Match match = notesPattern.Match(input);
-            while (match.Success)
+            Match match = notesPattern1.Match(input);
+            if (match.Success)
             {
                 if (field == null && Int32.TryParse(match.Groups["row"].Value, out row) &&
                     Int32.TryParse(match.Groups["col"].Value, out col))
@@ -524,8 +540,20 @@ namespace Tek1
                     field = board.values[row, col];
                 }
                 if (field != null && Int32.TryParse(match.Groups["value"].Value, out value))
+                {
                     field.ToggleNote(value);
-                match = match.NextMatch();
+                    match = notesPattern2.Match(match.Groups["rest"].Value);
+                    while (match.Success)
+                    {
+                        if (Int32.TryParse(match.Groups["value"].Value, out value))
+                        {
+                            field.ToggleNote(value);
+                            match = match.NextMatch();
+                        }
+                        else
+                            ParseError("Invalid value in notes line {0}: ({1})", input, match.Groups["value"].Value);
+                    }
+                }                
             }
             return field != null;
         }
