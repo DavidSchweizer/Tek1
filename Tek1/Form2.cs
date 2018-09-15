@@ -129,6 +129,7 @@ namespace Tek1
 
     class TekPanelData
     {
+        // data to assist in displaying the fields
         const int MAXTILESIZE = 60;
         FontFamily fontFamily = new FontFamily("Calibri");
         int FontSize;
@@ -178,7 +179,6 @@ namespace Tek1
             NotePoint[2] = new Point(TileSize / 2, TileSize / 2);
             NotePoint[3] = new Point(d, TileSize - d);
             NotePoint[4] = new Point(TileSize - d, TileSize - d);
-
         }
 
         public void SetCenterAlignment()
@@ -207,11 +207,13 @@ namespace Tek1
 
         private TekPanelData data = new TekPanelData();
 
+        private TekMoves Moves;
         private TekBoard board = null;
         public TekBoard Board { get { return board; } set { SetBoard(value); } }
         private void SetBoard(TekBoard value)
         {
             board = value;
+            Moves = new TekMoves(board);
             SetAreaColors(board);
             initializePanels();
             SetBorders();
@@ -377,6 +379,7 @@ namespace Tek1
 
         private TekField field;
         static public TekFieldPanel SelectedPanel = null;
+
         public bool IsSelected { get; set; }
         private TekPanelData _data;
 

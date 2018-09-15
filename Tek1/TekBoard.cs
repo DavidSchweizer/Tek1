@@ -28,19 +28,19 @@ namespace Tek1
         public int Row { get { return _row; } }
         public int Col { get { return _col; } }
 
-        public TekField(int arow, int acol)
+        public TekField(int arow, int acol) 
         {
-            _value = 0;
-            initial = false;
             _row = arow;
             _col = acol;
+            _value = 0;
+            initial = false;
             neighbours = new List<TekField>();
             influencers = new List<TekField>();
             PossibleValues = new List<int>();
             for (int i = 1; i <= Const.MAXTEK; i++)
                 PossibleValues.Add(i);
             Notes = new List<int>();
-            area = null;
+            area = null;        
         }
 
         public int Value { get { return _value;  } set { SetValue(value); } }
@@ -53,6 +53,13 @@ namespace Tek1
             UpdatePossibleValues(true);
         }
 
+        public void ToggleValue(int avalue)
+        {
+            if (Value == avalue)
+                SetValue(0);
+            else
+                SetValue(avalue);
+        }
         public void ToggleNote(int anote)
         {
             if (anote < 0 || anote > Const.MAXTEK)
@@ -557,8 +564,6 @@ namespace Tek1
             }
             return field != null;
         }
-
-
 
         private void UpdatePossibleValues(TekBoard board)
         {
