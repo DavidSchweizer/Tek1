@@ -81,7 +81,7 @@ namespace Tek1
 
         public void UnPlay()
         {
-            if (Moves.Peek() != null)
+            if (Moves.Count() > 0)
             {
                 TekPlay move = Moves.Pop();
                 switch (move.Move)

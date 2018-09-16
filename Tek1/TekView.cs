@@ -13,6 +13,7 @@ namespace Tek1
     {
         private TekBoardView _view;
         public TekBoard Board { get { return _view.Board; } }
+        protected TekMoves Moves = null;
 
 
         public TekView(Control parent, Point TopLeft, Point BottomRight)
@@ -23,6 +24,12 @@ namespace Tek1
             _view.Left = TopLeft.X;
             _view.Width = BottomRight.X - TopLeft.X;
             _view.Height = BottomRight.Y - TopLeft.Y;
+        }
+
+        public void SetBoard(TekBoard board)
+        {
+            _view.Board = board;
+            Moves = new TekMoves(board);
         }
 
         public bool LoadFromFile(string FileName)
@@ -40,7 +47,7 @@ namespace Tek1
             }
             if (board != null)
             {
-                _view.Board = board;
+                SetBoard(board);
                 return true;
             }
             else
@@ -64,6 +71,7 @@ namespace Tek1
                     TekFieldView.SelectedPanel.Value = 0;
                 else
                     TekFieldView.SelectedPanel.Value = value;
+                Moves.PlayValue(TekFieldView.SelectedPanel.Row, TekFieldView.SelectedPanel.Col, value);
                 return true;
             }
             else
@@ -94,6 +102,7 @@ namespace Tek1
             if (Board == null)
                 return false;
             Board.ResetValues();
+            Moves.Clear();
             _view.Refresh();
             return true;
 
@@ -104,11 +113,24 @@ namespace Tek1
             if (Board != null && TekFieldView.SelectedPanel != null)
             {
                 TekFieldView.SelectedPanel.ToggleNote(value);
+                Moves.PlayNote(TekFieldView.SelectedPanel.Row, TekFieldView.SelectedPanel.Col, value);
                 return true;
             }
             else return false;
 
 
+        }
+
+        public bool UnPlay()
+        {
+            if (Moves != null)
+            {
+                Moves.UnPlay();
+                _view.Refresh();
+                return true;
+            }
+            else
+                return false;
         }
     }
 
@@ -137,7 +159,6 @@ namespace Tek1
         private void SetBoard(TekBoard value)
         {
             board = value;
-            Moves = new TekMoves(board);
             SetAreaColors(board);
             initializePanels();
             SetBorders();

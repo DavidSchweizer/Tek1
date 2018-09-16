@@ -87,6 +87,12 @@ namespace Tek1
             if ((sender is Button) && Int32.TryParse((sender as Button).Text, out value))
                 View.ToggleSelectedNoteValue(value);
         }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            View.UnPlay();
+
+        }
     }
 
    
