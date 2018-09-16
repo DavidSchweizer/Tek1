@@ -62,6 +62,7 @@
     <Compile Include="TekBoard.cs" />
     <Compile Include="TekPlay.cs" />
     <Compile Include="TekSolver.cs" />
+    <Compile Include="TekView.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

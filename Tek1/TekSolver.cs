@@ -98,13 +98,22 @@ namespace Tek1
             }
             return result && Board.IsSolved();
         }
-        StreamWriter sw = new StreamWriter("debug.log");
+        StreamWriter DBG = null;
+
+        protected void DebugLog(string format, params object[] args)
+        {
+            if (DBG != null)
+            {
+                DBG.WriteLine(format, args);
+                DBG.Flush();
+            }           
+        }    
+
         public bool BruteForceSolve()
         {
 
             TekField Field0 = SortedFields[0];
-            sw.WriteLine("trying: {0}", Field0.AsString());
-            sw.Flush();
+            DebugLog("trying: {0}", Field0.AsString());
             if (Field0.PossibleValues.Count == 0)
                 return Board.IsSolved();
             for (int i = 0; i < Field0.PossibleValues.Count; i++)
@@ -117,14 +126,14 @@ namespace Tek1
             } // if we get here, this branch has no solution
             return false;
         }
+
         public bool Solve()
         {
             bool result = false;
-            while (!result)
+            using (StreamWriter DBG = new StreamWriter("debug.log"))
             {
-                if (!SimpleSolve() && !BruteForceSolve()) // no improvement possible
-                    break;
-                result = Board.IsSolved();
+                if (SimpleSolve() || BruteForceSolve())
+                    result = Board.IsSolved();
             }
             return result;
         }
