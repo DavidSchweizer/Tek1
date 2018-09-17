@@ -93,6 +93,16 @@ namespace Tek1
             View.UnPlay();
 
         }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            View.TakeSnapshot(String.Format("snapshot {0}", 1 + View.SnapshotCount()));
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            View.RestoreSnapshot("snapshot 1");
+        }
     }
 
    

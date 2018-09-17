@@ -126,6 +126,36 @@ namespace Tek1
             else
                 return false;
         }
+
+        public int SnapshotCount()
+        {
+            return Moves.SnapshotCount();
+        }
+
+        public bool TakeSnapshot(string name)
+        {
+            if (Moves != null)
+            {
+                Moves.TakeSnapshot(name);
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public bool RestoreSnapshot(string name)
+        {
+            if (Moves != null)
+            {
+                Moves.RestoreSnapshot(name);
+                _view.Refresh();
+                return true;
+            }
+            else
+                return false;
+
+        }
+
     }
 
     class TekBoardView : Panel

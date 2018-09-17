@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tek1
 {
-    public enum TekMove { tmValue, tmNote, tmClear };
+    public enum TekMove { tmValue, tmNote, tmClear, tmSnapshot };
 
     class TekPlay
     {
@@ -15,12 +15,14 @@ namespace Tek1
         private TekMove _move;
         private int _value;
         private List<int> _notes;
+        private string _name;
         public int Row { get { return _row; } }
         public int Col { get { return _col; } }
         public int Value { get { return _value; } }
         public List<int> Notes { get { return _notes; } } 
         public TekMove Move { get { return _move; } }
-        public TekPlay(int row, int col, TekMove move, int value, List<int> notes = null)
+        public string Name { get { return _name; } }
+        public TekPlay(int row, int col, TekMove move, int value, List<int> notes = null, string name = "")
         {
             _row = row;
             _col = col;
@@ -34,6 +36,7 @@ namespace Tek1
                 foreach (int i in notes)
                     _notes.Add(i);
             }
+            _name = name;
         }
     }
 
@@ -45,20 +48,50 @@ namespace Tek1
         private Stack<TekPlay> _moves;
         protected Stack<TekPlay> Moves { get { return _moves; } }
 
+        private TekSnapShot _snapshots;
+        protected TekSnapShot Snapshots { get { return _snapshots; } }
+
         public TekMoves(TekBoard board)
         {
             _moves = new Stack<TekPlay>();
             _board = board;
+            _snapshots = new TekSnapShot(Board);
         }
 
-        private void PushMove(int row, int col, TekMove move, int value)
+        public void TakeSnapshot(string name)
         {
-            if (move == TekMove.tmClear)
-                Moves.Push(new TekPlay(row, col, TekMove.tmClear, value, Board.values[row, col].Notes));
-            else
-                Moves.Push(new TekPlay(row, col, move, value));
+            Snapshots.TakeSnapshot(name);
+            PushMove(0, 0, TekMove.tmSnapshot, 0, name);
         }
 
+        public void RestoreSnapshot(string name)
+        {
+            Snapshots.RestoreSnapshot(name);
+            while (Moves.Count > 0 && Moves.Peek().Move != TekMove.tmSnapshot && Moves.Peek().Name != name)
+                Moves.Pop();
+            if (Moves.Count > 0) // found snapshot location
+                Moves.Pop();
+        }
+        public int SnapshotCount()
+        {
+            return Snapshots.Count();
+        }
+        private void PushMove(int row, int col, TekMove move, int value, string name="")
+        {
+            switch(move)
+            {
+                case TekMove.tmClear:
+                    Moves.Push(new TekPlay(row, col, TekMove.tmClear, value, Board.values[row, col].Notes));
+                    break;
+                case TekMove.tmSnapshot:
+                    Moves.Push(new TekPlay(row, col, TekMove.tmClear, value, null, name));
+                    break;
+                default:
+                    Moves.Push(new TekPlay(row, col, move, value));
+                    break;
+            }
+        }
+        
         public void PlayValue(int row, int col, int value)
         {
             PushMove(row, col, TekMove.tmValue, value);
@@ -103,6 +136,72 @@ namespace Tek1
         public void Clear()
         {
             Moves.Clear();
+        }
+    }
+
+    class TekSnapShot
+    {
+        private TekBoard _board;
+        public TekBoard Board { get { return _board; } }
+
+        protected List<int[,]> _ssValues;
+        protected List<int[,]> Values {  get { return _ssValues; } }
+
+        protected List<List<int>[,]> _ssNotes;
+        protected List<List<int>[,]> Notes {  get { return _ssNotes; } }
+
+        protected List<string> _snapshots;
+        public List<string> Snapshots { get { return _snapshots; } }
+
+
+        public TekSnapShot(TekBoard board)
+        {
+            _ssValues = new List<int[,]>();
+            _ssNotes = new List<List<int>[,]>();
+            _snapshots = new List<string>();
+            _board = board;
+        }
+
+        public void TakeSnapshot(string name)
+        {
+            int[,] vs = new int[Board.Rows, Board.Cols];
+            List<int>[,] ns = new List<int>[Board.Rows, Board.Cols];
+
+            foreach (TekField field in Board.values)
+            {
+                vs[field.Row, field.Col] = field.Value;
+                List<int> nns = new List<int>();
+                foreach (int i in field.Notes)
+                    nns.Add(i);
+                ns[field.Row, field.Col] = nns;
+            }
+            Values.Add(vs);
+            Notes.Add(ns);
+            Snapshots.Add(name);
+        }
+
+        public void RestoreSnapshot(string name)
+        {
+            int index = Snapshots.IndexOf(name);
+            if (index == -1)
+                return;
+            int[,] vs = Values.ElementAt(index);
+            List<int>[,] ns = Notes.ElementAt(index);
+            foreach (TekField field in Board.values)
+            {
+                field.Value = vs[field.Row, field.Col];
+                field.Notes.Clear();
+                foreach (int i in ns[field.Row, field.Col])
+                    field.Notes.Add(i);
+            }
+            Values.RemoveAt(index);
+            Notes.RemoveAt(index);
+            Snapshots.RemoveAt(index);
+        }
+
+        public int Count()
+        {
+            return Snapshots.Count;
         }
     }
 }
