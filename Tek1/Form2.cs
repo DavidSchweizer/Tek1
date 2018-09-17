@@ -55,6 +55,13 @@ namespace Tek1
             }
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            View.HandleKeyDown(ref msg, keyData);
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void bSolveClick(object sender, EventArgs e)
         {
             if (View.Board != null && !View.Solve())

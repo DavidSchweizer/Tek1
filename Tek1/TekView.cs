@@ -65,9 +65,9 @@ namespace Tek1
 
         public bool ToggleSelectedValue(int value)
         {
-            if (Board != null && TekFieldView.SelectedPanel != null)
+            if (Board != null && TekFieldView.SelectedFieldView != null)
             {
-                Moves.PlayValue(TekFieldView.SelectedPanel.Row, TekFieldView.SelectedPanel.Col, value);
+                Moves.PlayValue(TekFieldView.SelectedFieldView.Row, TekFieldView.SelectedFieldView.Col, value);
                 _view.Refresh();
                 return true;
             }
@@ -106,9 +106,9 @@ namespace Tek1
 
         public bool ToggleSelectedNoteValue(int value)
         {
-            if (Board != null && TekFieldView.SelectedPanel != null)
+            if (Board != null && TekFieldView.SelectedFieldView != null)
             {
-                Moves.PlayNote(TekFieldView.SelectedPanel.Row, TekFieldView.SelectedPanel.Col, value);
+                Moves.PlayNote(TekFieldView.SelectedFieldView.Row, TekFieldView.SelectedFieldView.Col, value);
                 _view.Refresh();
                 return true;
             }
@@ -154,6 +154,53 @@ namespace Tek1
             else
                 return false;
 
+        }
+
+        public void MoveSelected(int deltaR, int deltaC)
+        {
+            TekFieldView v = TekFieldView.SelectedFieldView;
+            if (v == null)
+                return;
+           _view.SelectField(v.Field.Row + deltaR, v.Field.Col + deltaC);
+           // v.Refresh();
+        }
+
+        public void HandleKeyDown(ref Message msg, Keys keyData)
+        {
+            if (TekFieldView.SelectedFieldView != null)
+            {
+                switch (keyData)
+                {
+                    case Keys.D1:
+                    case Keys.D2:
+                    case Keys.D3:
+                    case Keys.D4:
+                    case Keys.D5:
+                        ToggleSelectedValue(1 + keyData - Keys.D1);
+                        break;
+                    case Keys.Alt | Keys.D1:
+                    case Keys.Alt | Keys.D2:
+                    case Keys.Alt | Keys.D3:
+                    case Keys.Alt | Keys.D4:
+                    case Keys.Alt | Keys.D5:
+                        ToggleSelectedNoteValue(1 + (int)keyData - Keys.Alt - Keys.D1);
+                        break;
+                    case Keys.Up:
+                        MoveSelected(-1, 0);
+                        break;
+                    case Keys.Down:
+                        MoveSelected(1, 0);
+                        break;
+                    case Keys.Left:
+                        MoveSelected(0, -1);
+                        break;
+                    case Keys.Right:
+                        MoveSelected(0, 1);
+                        break;
+
+                }
+            }
+            
         }
 
     }
@@ -325,6 +372,14 @@ namespace Tek1
                     }
                 }
         }
+
+        public TekFieldView SelectField(int row, int col)
+        {
+            TekFieldView result = TekFieldView.SelectedFieldView;
+            if (row >= 0 && row < Board.Rows && col >= 0 && col < Board.Cols)
+                _Panels[row, col].SelectPanel();
+            return result;
+        }
     }
 
     class TekFieldView : Panel
@@ -347,7 +402,7 @@ namespace Tek1
         }
 
         private TekField field;
-        static public TekFieldView SelectedPanel = null;
+        static public TekFieldView SelectedFieldView = null;
 
         public bool IsSelected { get; set; }
         private TekPanelData _data;
@@ -386,39 +441,18 @@ namespace Tek1
             if (!onoff)
             {
                 this.BackColor = NormalColor;
-                SelectedPanel = null;
+                SelectedFieldView = null;
                 IsSelected = false;
             }
             else
             {
-                if (SelectedPanel != null)
-                    SelectedPanel.SelectPanel(false);
-                SelectedPanel = this;
+                if (SelectedFieldView != null)
+                    SelectedFieldView.SelectPanel(false);
+                SelectedFieldView = this;
                 IsSelected = true;
                 this.BackColor = SelectedColor;
             }
             this.Refresh();
-        }
-
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            // dO operations here...
-            if (SelectedPanel != null)
-            {
-                switch (keyData)
-                {
-                    case Keys.D1:
-                    case Keys.D2:
-                    case Keys.D3:
-                    case Keys.D4:
-                    case Keys.D5:
-                        MessageBox.Show(String.Format("key: {0}", 1 + keyData - Keys.D1));
-                        break;
-                }
-            }
-
-
-            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void SetField(TekField value)
