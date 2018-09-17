@@ -197,11 +197,13 @@ namespace Tek1
                     case Keys.Right:
                         MoveSelected(0, 1);
                         break;
-
                 }
             }
             
         }
+
+        public int Width { get { return _view.Width; } set { _view.Width = value; } }
+        public int Height { get { return _view.Height; } set { _view.Height = value; } }
 
     }
 
@@ -247,6 +249,11 @@ namespace Tek1
             _Panels = null;
         }
 
+        public TekBoardView()
+        {
+            this.Resize += Board_Resize;
+        }
+
         private void Panel_Click(object sender, EventArgs e)
         {
             if (Board == null)
@@ -258,9 +265,36 @@ namespace Tek1
             }
         }
 
+        private void Board_Resize(object sender, EventArgs e)
+        {
+            if (Board != null)
+            {
+                data.TileSize = ComputeTileSize(ClientRectangle.Width, ClientRectangle.Height);
+                for (int r = 0; r < Board.Rows; r++)
+                    for (int c = 0; c < Board.Cols; c++)
+                        ReSizeFieldView(_Panels[r, c], data.TileSize, r, c);
+            }
+                
+        }
+        const int PADDING = 6;
+
+        private int ComputeTileSize(int width, int height)
+        {
+            if (Board != null)
+                return Math.Min((width - PADDING) / Board.Cols, (height - PADDING) / Board.Rows);
+            else
+                return 0;
+        }
+
+        private void ReSizeFieldView(TekFieldView v, int TileSize, int r, int c)
+        {
+            v.Size = new Size(TileSize, TileSize);
+            v.Location = new Point(PADDING / 2 + data.TileSize * c, PADDING / 2 + data.TileSize * r);
+        }
+
         private void initializePanels()
         {
-            const int PADDING = 6;
+           
             var clr1 = Color.DarkGray;
             var clr2 = Color.White;
             Random R = new Random();
@@ -269,18 +303,16 @@ namespace Tek1
             if (Board == null)
                 return;
 
-            data.TileSize = Math.Min((this.ClientRectangle.Width - PADDING) / Board.Cols, (this.ClientRectangle.Height - PADDING) / Board.Rows);
+            data.TileSize = ComputeTileSize(this.ClientRectangle.Width, this.ClientRectangle.Height);
 
             _Panels = new TekFieldView[Board.Rows, Board.Cols];
 
             for (int r = 0; r < Board.Rows; r++)
                 for (int c = 0; c < Board.Cols; c++)
                 {
-                    TekFieldView newP = new TekFieldView
-                    {
-                        Size = new Size(data.TileSize, data.TileSize),
-                        Location = new Point(PADDING / 2 + data.TileSize * c, PADDING / 2 + data.TileSize * r)
-                    };
+                    TekFieldView newP = new TekFieldView();
+                    ReSizeFieldView(newP, data.TileSize, r, c);
+                    
                     newP.Data = data;
                     newP.Field = Board.values[r, c];
                     newP.NormalColor = AreaColors[AreaColorIndex[newP.Field.area.AreaNum]];

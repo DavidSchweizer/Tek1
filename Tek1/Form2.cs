@@ -95,6 +95,15 @@ namespace Tek1
         {
             View.RestoreSnapshot("snapshot 1");
         }
+
+        private void panel1_Resize(object sender, EventArgs e)
+        {
+            if (View != null)
+            {
+                View.Width = panel1.Width;
+                View.Height = panel1.Height;
+            }
+        }
     }
 
    
