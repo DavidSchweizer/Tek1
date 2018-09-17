@@ -166,7 +166,7 @@ namespace Tek1
               Color.LightGray, Color.Beige, Color.DeepPink
             };
         static System.Drawing.Color[] SelectedAreaColors =
-             { Color.Chartreuse, Color.DarkOrange, Color.DeepSkyBlue,
+             { Color.MediumSeaGreen, Color.DarkOrange, Color.DeepSkyBlue,
               Color.HotPink, Color.Goldenrod, Color.Salmon,
               Color.SlateGray, Color.SaddleBrown, Color.Fuchsia
             };
@@ -177,7 +177,6 @@ namespace Tek1
 
         private TekPanelData data = new TekPanelData();
 
-        private TekMoves Moves;
         private TekBoard board = null;
         public TekBoard Board { get { return board; } set { SetBoard(value); } }
         private void SetBoard(TekBoard value)
@@ -240,7 +239,8 @@ namespace Tek1
                     newP.NormalColor = AreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
                     newP.SelectedColor = SelectedAreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
                     newP.Click += new EventHandler(Panel_Click);
-                    //                    newP.KeyDown+= new EventHandler(Panel_KeyDown);
+                    //(newP as Control).KeyDown+= new EventHandler(Panel_KeyDown);
+
                     this.Controls.Add(newP);
                     _Panels[r, c] = newP;
                 }
@@ -398,6 +398,27 @@ namespace Tek1
                 this.BackColor = SelectedColor;
             }
             this.Refresh();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // dO operations here...
+            if (SelectedPanel != null)
+            {
+                switch (keyData)
+                {
+                    case Keys.D1:
+                    case Keys.D2:
+                    case Keys.D3:
+                    case Keys.D4:
+                    case Keys.D5:
+                        MessageBox.Show(String.Format("key: {0}", 1 + keyData - Keys.D1));
+                        break;
+                }
+            }
+
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void SetField(TekField value)

@@ -55,21 +55,6 @@ namespace Tek1
             }
         }
 
-        private void Panel_KeyDown(object sender, KeyEventArgs e)
-        {
-/*  
- *  if (TekFieldView.SelectedPanel != null)
-            {
-                switch(e.KeyCode)
-                {
-                    case Keys.D1:
-                        TekFieldView.SelectedPanel.Value = 1;
-                        break;
-                }
-            }
-            */
-        }
-
         private void bSolveClick(object sender, EventArgs e)
         {
             if (View.Board != null && !View.Solve())
