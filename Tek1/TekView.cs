@@ -67,11 +67,8 @@ namespace Tek1
         {
             if (Board != null && TekFieldView.SelectedPanel != null)
             {
-                if (TekFieldView.SelectedPanel.Value == value)
-                    TekFieldView.SelectedPanel.Value = 0;
-                else
-                    TekFieldView.SelectedPanel.Value = value;
                 Moves.PlayValue(TekFieldView.SelectedPanel.Row, TekFieldView.SelectedPanel.Col, value);
+                _view.Refresh();
                 return true;
             }
             else
@@ -105,20 +102,17 @@ namespace Tek1
             Moves.Clear();
             _view.Refresh();
             return true;
-
         }
 
         public bool ToggleSelectedNoteValue(int value)
         {
             if (Board != null && TekFieldView.SelectedPanel != null)
             {
-                TekFieldView.SelectedPanel.ToggleNote(value);
                 Moves.PlayNote(TekFieldView.SelectedPanel.Row, TekFieldView.SelectedPanel.Col, value);
+                _view.Refresh();
                 return true;
             }
             else return false;
-
-
         }
 
         public bool UnPlay()

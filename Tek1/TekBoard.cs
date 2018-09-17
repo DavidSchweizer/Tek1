@@ -60,6 +60,7 @@ namespace Tek1
             else
                 SetValue(avalue);
         }
+
         public void ToggleNote(int anote)
         {
             if (anote < 0 || anote > Const.MAXTEK)
