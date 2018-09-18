@@ -63,6 +63,16 @@ namespace Tek1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap backspace {
+            get {
+                object obj = ResourceManager.GetObject("backspace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap folder {
             get {
                 object obj = ResourceManager.GetObject("folder", resourceCulture);
@@ -156,6 +166,16 @@ namespace Tek1.Properties {
         internal static System.Drawing.Bitmap reset1 {
             get {
                 object obj = ResourceManager.GetObject("reset1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap rstore23 {
+            get {
+                object obj = ResourceManager.GetObject("rstore23", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

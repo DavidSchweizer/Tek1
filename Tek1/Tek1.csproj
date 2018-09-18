@@ -93,6 +93,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="rstore23.png" />
     <None Include="snappie2.png" />
     <None Include="snapshot.png" />
     <None Include="reset.png" />
@@ -105,6 +106,7 @@
     <None Include="open-flat.png" />
     <None Include="folder.png" />
     <None Include="magic.png" />
+    <None Include="backspace.png" />
     <Content Include="open-folder.jpg" />
     <None Include="open-folder_small.png" />
     <None Include="open-folder_small.jpg" />

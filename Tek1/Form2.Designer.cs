@@ -43,13 +43,13 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.button11 = new System.Windows.Forms.Button();
-            this.button13 = new System.Windows.Forms.Button();
             this.split = new System.Windows.Forms.SplitContainer();
+            this.button13 = new System.Windows.Forms.Button();
             this.bSave = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.bLoad = new System.Windows.Forms.Button();
             this.bSolve = new System.Windows.Forms.Button();
+            this.button11 = new System.Windows.Forms.Button();
             this.bReset = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.split)).BeginInit();
@@ -204,27 +204,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.ToggleNoteButton_Click);
             // 
-            // button11
-            // 
-            this.button11.Location = new System.Drawing.Point(97, 169);
-            this.button11.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(68, 35);
-            this.button11.TabIndex = 12;
-            this.button11.Text = "ctrl-Z";
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // button13
-            // 
-            this.button13.Location = new System.Drawing.Point(362, 436);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(54, 54);
-            this.button13.TabIndex = 14;
-            this.ttSolve.SetToolTip(this.button13, "Restore a snapshot");
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
-            // 
             // split
             // 
             this.split.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -253,6 +232,18 @@
             this.split.Size = new System.Drawing.Size(800, 552);
             this.split.SplitterDistance = 334;
             this.split.TabIndex = 10;
+            // 
+            // button13
+            // 
+            this.button13.BackgroundImage = global::Tek1.Properties.Resources.rstore23;
+            this.button13.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button13.Location = new System.Drawing.Point(362, 436);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(54, 54);
+            this.button13.TabIndex = 14;
+            this.ttSolve.SetToolTip(this.button13, "Restore a snapshot");
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // bSave
             // 
@@ -296,13 +287,27 @@
             // 
             this.bSolve.BackgroundImage = global::Tek1.Properties.Resources.solve;
             this.bSolve.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.bSolve.Location = new System.Drawing.Point(16, 357);
+            this.bSolve.Location = new System.Drawing.Point(17, 436);
             this.bSolve.Name = "bSolve";
             this.bSolve.Size = new System.Drawing.Size(54, 54);
             this.bSolve.TabIndex = 7;
             this.ttSolve.SetToolTip(this.bSolve, "Solve the puzzle");
             this.bSolve.UseVisualStyleBackColor = true;
             this.bSolve.Click += new System.EventHandler(this.bSolveClick);
+            // 
+            // button11
+            // 
+            this.button11.BackgroundImage = global::Tek1.Properties.Resources.backspace;
+            this.button11.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button11.Location = new System.Drawing.Point(125, 179);
+            this.button11.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(54, 54);
+            this.button11.TabIndex = 12;
+            this.ttSolve.SetToolTip(this.button11, "Undo the last change");
+            this.button11.UseCompatibleTextRendering = true;
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // bReset
             // 
