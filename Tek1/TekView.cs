@@ -32,6 +32,12 @@ namespace Tek1
             Moves = new TekMoves(board);
         }
 
+        public void SetSize(int width, int height)
+        {
+            Width = width - TekBoardView.PADDING;
+            Height = height - TekBoardView.PADDING;
+        }
+
         public bool LoadFromFile(string FileName)
         {
             TekBoardParser tbp = new TekBoardParser();
@@ -129,7 +135,10 @@ namespace Tek1
 
         public int SnapshotCount()
         {
-            return Moves.SnapshotCount();
+            if (Moves == null)
+                return 0;
+            else
+                return Moves.SnapshotCount();
         }
 
         public bool TakeSnapshot(string name)
@@ -273,10 +282,11 @@ namespace Tek1
                 for (int r = 0; r < Board.Rows; r++)
                     for (int c = 0; c < Board.Cols; c++)
                         ReSizeFieldView(_Panels[r, c], data.TileSize, r, c);
+                Refresh();
             }
                 
         }
-        const int PADDING = 6;
+        public const int PADDING = 6;
 
         private int ComputeTileSize(int width, int height)
         {
@@ -290,6 +300,8 @@ namespace Tek1
         {
             v.Size = new Size(TileSize, TileSize);
             v.Location = new Point(PADDING / 2 + data.TileSize * c, PADDING / 2 + data.TileSize * r);
+//            this.Width = PADDING + Board.Cols * data.TileSize;
+//            this.Height = PADDING + Board.Rows * data.TileSize;
         }
 
         private void initializePanels()
@@ -402,7 +414,9 @@ namespace Tek1
                         else
                             p.Borders[(int)TekFieldView.TekBorder.bdRight] = TekFieldView.TekBorderStyle.tbsExternal;
                     }
+                    p.Invalidate();
                 }
+            
         }
 
         public TekFieldView SelectField(int row, int col)
@@ -592,6 +606,7 @@ namespace Tek1
     {
         // data to assist in displaying the fields
         const int MAXTILESIZE = 60;
+        const int MINTILESIZE = 25;
         FontFamily fontFamily = new FontFamily("Calibri");
         int FontSize;
         int FontSize2;
@@ -614,8 +629,13 @@ namespace Tek1
 
         public void SetTileSize(int value)
         {
+            if (value == _tileSize)
+                return;
             if (value > MAXTILESIZE)
                 _tileSize = MAXTILESIZE;
+            else
+                if (value < MINTILESIZE)
+                value = MINTILESIZE;
             else
                 _tileSize = value;
             FontSize = Convert.ToInt32(TileSize * 0.7);

@@ -19,9 +19,9 @@ namespace Tek1
         public Form2()
         {
             InitializeComponent();
-            View = new TekView(panel1, new Point(10,10),
-                new Point(panel1.ClientRectangle.Width - 10,
-                          panel1.ClientRectangle.Height - 10));
+            View = new TekView(split.Panel1, new Point(10,10),
+                new Point(split.Panel1.ClientRectangle.Width - 10,
+                          split.Panel1.ClientRectangle.Height - 10));
         }
 
         private void bLoad_Click(object sender, EventArgs e)
@@ -29,6 +29,7 @@ namespace Tek1
             if (ofd1.ShowDialog() == DialogResult.OK)
             {
                 View.LoadFromFile(ofd1.FileName);
+                this.Text = ofd1.FileName;
             }
         }
 
@@ -100,8 +101,7 @@ namespace Tek1
         {
             if (View != null)
             {
-                View.Width = panel1.Width;
-                View.Height = panel1.Height;
+                View.SetSize(split.Panel1.Width, split.Panel1.Height);
             }
         }
     }

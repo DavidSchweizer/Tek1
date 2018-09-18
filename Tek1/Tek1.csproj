@@ -93,6 +93,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="snappie2.png" />
+    <None Include="snapshot.png" />
     <None Include="reset.png" />
     <None Include="solve.png" />
     <None Include="save-new.png" />
