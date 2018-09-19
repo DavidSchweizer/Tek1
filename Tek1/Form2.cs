@@ -104,6 +104,11 @@ namespace Tek1
                 View.SetSize(split.Panel1.Width, split.Panel1.Height);
             }
         }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            View.SetShowErrors();
+        }
     }
 
    

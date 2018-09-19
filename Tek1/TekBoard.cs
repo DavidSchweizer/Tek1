@@ -125,6 +125,18 @@ namespace Tek1
             }
 
         }
+        public bool IsValid()
+        {
+            if (Value == 0)
+                return PossibleValues.Count > 0;
+            else
+            {
+                foreach (TekField field in influencers)
+                    if (field.Value == Value)
+                        return false;
+                return true;
+            }
+        }
 
         public void AddNeighbour(TekField f)
         {
@@ -423,8 +435,7 @@ namespace Tek1
             return result;
         }
     } // TekBoard
-
-
+    
     public class TekBoardParser
     {
         const string SIZEPATTERN = @"size=(?<rows>[1-9]\d*),(?<cols>[1-9]\d*)";

@@ -51,6 +51,7 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.split = new System.Windows.Forms.SplitContainer();
+            this.button14 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.split)).BeginInit();
             this.split.Panel2.SuspendLayout();
@@ -304,6 +305,7 @@
             // 
             // split.Panel2
             // 
+            this.split.Panel2.Controls.Add(this.button14);
             this.split.Panel2.Controls.Add(this.button13);
             this.split.Panel2.Controls.Add(this.groupBox1);
             this.split.Panel2.Controls.Add(this.bSave);
@@ -320,6 +322,16 @@
             this.split.Size = new System.Drawing.Size(800, 552);
             this.split.SplitterDistance = 334;
             this.split.TabIndex = 10;
+            // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(340, 362);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(75, 23);
+            this.button14.TabIndex = 11;
+            this.button14.Text = "button14";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // Form2
             // 
@@ -361,5 +373,6 @@
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.SplitContainer split;
         private System.Windows.Forms.OpenFileDialog ofd1;
+        private System.Windows.Forms.Button button14;
     }
 }
