@@ -11,18 +11,14 @@ namespace Tek1
     {
         public int Compare(TekField x, TekField y)
         {
-            if (x.PossibleValues.Count == 0 && y.PossibleValues.Count == 0)
+            if (x.PossibleValues.Count == y.PossibleValues.Count)
                 return 0;
             else if (x.PossibleValues.Count == 0)
                 return 1;
-            else if (y.PossibleValues.Count == 0)
+           	else if (y.PossibleValues.Count == 0 || x.PossibleValues.Count < y.PossibleValues.Count ) 
                 return -1;
-            else if (x.PossibleValues.Count < y.PossibleValues.Count)
-                return -1;
-            else if (x.PossibleValues.Count > y.PossibleValues.Count)
-                return 1;
             else
-                return 0;
+                return 1;
         }
     }
 
@@ -31,13 +27,14 @@ namespace Tek1
         private TekBoard board;
         public TekBoard Board { get { return board; } set { SetBoard(value); } }
 
-        private List<TekField> SortedFields;
+        private List<TekField> _sortedFields;
+		protected List<TekField> SortedFields { get { return _sortedFields; } }
         private TekFieldComparer sorter;
         private Stack<int[,]> _stack;
 
         public TekSolver(TekBoard board)
         {
-            SortedFields = new List<TekField>();
+            _sortedFields = new List<TekField>();
             sorter = new TekFieldComparer();
             Board = board;
             _stack = new Stack<int[,]>();
@@ -85,6 +82,7 @@ namespace Tek1
             field.Value = value;
             SortFields();
         }
+
         public bool SimpleSolve()
         {
             bool result = false;

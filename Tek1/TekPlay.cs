@@ -164,19 +164,8 @@ namespace Tek1
 
         public void TakeSnapshot(string name)
         {
-            int[,] vs = new int[Board.Rows, Board.Cols];
-            List<int>[,] ns = new List<int>[Board.Rows, Board.Cols];
-
-            foreach (TekField field in Board.values)
-            {
-                vs[field.Row, field.Col] = field.Value;
-                List<int> nns = new List<int>();
-                foreach (int i in field.Notes)
-                    nns.Add(i);
-                ns[field.Row, field.Col] = nns;
-            }
-            Values.Add(vs);
-            Notes.Add(ns);
+            Values.Add(Board.CopyValues());
+            Notes.Add(Board.CopyNotes());
             Snapshots.Add(name);
         }
 
@@ -185,15 +174,8 @@ namespace Tek1
             int index = Snapshots.IndexOf(name);
             if (index == -1)
                 return;
-            int[,] vs = Values.ElementAt(index);
-            List<int>[,] ns = Notes.ElementAt(index);
-            foreach (TekField field in Board.values)
-            {
-                field.Value = vs[field.Row, field.Col];
-                field.Notes.Clear();
-                foreach (int i in ns[field.Row, field.Col])
-                    field.Notes.Add(i);
-            }
+            Board.LoadValues(Values.ElementAt(index));
+            Board.LoadNotes(Notes.ElementAt(index));
             Values.RemoveAt(index);
             Notes.RemoveAt(index);
             Snapshots.RemoveAt(index);

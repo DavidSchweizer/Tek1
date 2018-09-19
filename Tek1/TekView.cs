@@ -206,6 +206,10 @@ namespace Tek1
                     case Keys.Right:
                         MoveSelected(0, 1);
                         break;
+                    case Keys.Back:
+                    case Keys.Control | Keys.Z:
+                        UnPlay();
+                        break;
                 }
             }
             

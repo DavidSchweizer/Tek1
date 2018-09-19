@@ -83,6 +83,21 @@ namespace Tek1
             Notes.Clear();
         }
 
+		public List<int> CopyNotes()
+		{
+			List<int> result = new List<int>();
+			foreach(int value in Notes)
+			   result.Add(value);
+			return result;
+		}
+
+        public void LoadNotes(List<int> values)
+        {
+            Notes.Clear();
+            foreach (int value in values)
+                Notes.Add(value);
+        }
+			
         public void UpdatePossibleValues(bool cascade = false)
         {
             if (_cascading) // protection against endless loops 
@@ -146,7 +161,6 @@ namespace Tek1
                 AddInfluencer(field);
         }
 
-
         public string AsString(bool includeValue = false, bool includeArea=false)
         {
             string result = String.Format("[{0},{1}]", Row, Col);
@@ -156,12 +170,12 @@ namespace Tek1
                 result += String.Format(" area: {0}", area == null ? "-" : area.AreaNum.ToString());
             return result;
         }
-        public const uint FLD_DMP_NEIGHBOURS    = 1;
+        
+		public const uint FLD_DMP_NEIGHBOURS    = 1;
         public const uint FLD_DMP_INFLUENCERS   = 2;
         public const uint FLD_DMP_POSSIBLES     = 4;
         public const uint FLD_DMP_NOTES         = 8;
         public const uint FLD_DMP_ALL           = 65535;
-
 
         public void Dump(StreamWriter sw, uint flags = FLD_DMP_ALL)
         {
@@ -195,20 +209,15 @@ namespace Tek1
                 sw.WriteLine();
             }
         }
-    }
+    } // TekField
 
     public class TekArea
     {
         public List<TekField> fields;
-        public bool[] possible;
         public int AreaNum;
         public TekArea(int anum)
         {
             fields = new List<TekField>();
-            possible = new bool[1 + Const.MAXTEK]; // possible [i]: number i is possible in this area
-            possible[0] = false;
-            for (int i = 1; i <= Const.MAXTEK; i++)
-                possible[i] = true;
             AreaNum = anum;
         }
 
@@ -231,6 +240,7 @@ namespace Tek1
             foreach (TekField f in fields)
                 f.SetInfluencers();
         }
+
         public void AddField(TekField f)
         {
             if (fields.Contains(f)) // don't add more than once
@@ -273,7 +283,8 @@ namespace Tek1
         {
             sw.WriteLine(AsString());
         }
-    }
+    } // TekArea
+
     public class TekBoard
     {
         public TekField[,] values;
@@ -324,6 +335,23 @@ namespace Tek1
                     values[r, c].Value = newValues[r, c];
         }
 
+        public List<int>[,] CopyNotes()
+        {
+            List<int>[,] result = new List<int>[Rows, Cols];
+            foreach (TekField field in values)
+            {
+                result[field.Row, field.Col] = field.CopyNotes();
+            }
+            return result;
+        }
+
+        public void LoadNotes(List<int>[,] notes)
+        {
+            foreach (TekField field in values)
+            {
+                field.LoadNotes(notes[field.Row, field.Col]);
+            }
+        }
         public bool IsInRange(int row, int col)
         {
             return row >= 0 && row < Rows && col >= 0 && col < Cols;
@@ -352,7 +380,7 @@ namespace Tek1
             foreach (TekField field in values)
                 if (field.Value == 0)
                     return false;
-                else foreach (TekField field2 in field.neighbours)
+                else foreach (TekField field2 in field.influencers)
                         if (field2.Value == field.Value)
                             return false;
             return true;
@@ -394,7 +422,7 @@ namespace Tek1
             }
             return result;
         }
-    }
+    } // TekBoard
 
 
     public class TekBoardParser
