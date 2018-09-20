@@ -66,12 +66,20 @@ namespace Tek1
             return onoff;
         }
 
-            public bool SaveToFile(string FileName)
+        public bool SaveToFile(string FileName)
         {
             if (_view.Board == null)
                 return false;
             TekBoardParser tbp = new TekBoardParser();
             tbp.Export(_view.Board, FileName);
+            return true;
+        }
+
+        public bool ShowDefaultNotes()
+        {
+            if (Board == null)
+                return false;
+            _view.ShowDefaultNotes();
             return true;
         }
 
@@ -436,6 +444,14 @@ namespace Tek1
                 return;
             foreach (TekFieldView P in _Panels)
                 P.FieldError = onoff && P.Field != null && !P.Field.IsValid();
+            Refresh();
+        }
+
+        public void ShowDefaultNotes()
+        {
+            if (Board == null)
+                return;
+            Board.SetDefaultNotes();
             Refresh();
         }
     } // TekBoardView

@@ -46,6 +46,7 @@
             this.split = new System.Windows.Forms.SplitContainer();
             this.bCheck = new System.Windows.Forms.Button();
             this.bRestoreSnap = new System.Windows.Forms.Button();
+            this.bDefaultNotes = new System.Windows.Forms.Button();
             this.bSave = new System.Windows.Forms.Button();
             this.bTakeSnap = new System.Windows.Forms.Button();
             this.bLoad = new System.Windows.Forms.Button();
@@ -132,14 +133,15 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.bDefaultNotes);
+            this.groupBox1.Controls.Add(this.button8);
             this.groupBox1.Controls.Add(this.button10);
             this.groupBox1.Controls.Add(this.button9);
-            this.groupBox1.Controls.Add(this.button8);
             this.groupBox1.Controls.Add(this.button7);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Location = new System.Drawing.Point(93, 30);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(146, 129);
+            this.groupBox1.Size = new System.Drawing.Size(196, 114);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Notes";
@@ -147,7 +149,7 @@
             // button10
             // 
             this.button10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button10.Location = new System.Drawing.Point(88, 82);
+            this.button10.Location = new System.Drawing.Point(65, 68);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(30, 29);
             this.button10.TabIndex = 15;
@@ -159,7 +161,7 @@
             // button9
             // 
             this.button9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button9.Location = new System.Drawing.Point(15, 82);
+            this.button9.Location = new System.Drawing.Point(15, 69);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(30, 29);
             this.button9.TabIndex = 14;
@@ -171,7 +173,7 @@
             // button8
             // 
             this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button8.Location = new System.Drawing.Point(52, 55);
+            this.button8.Location = new System.Drawing.Point(40, 47);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(30, 29);
             this.button8.TabIndex = 13;
@@ -183,7 +185,7 @@
             // button7
             // 
             this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button7.Location = new System.Drawing.Point(88, 25);
+            this.button7.Location = new System.Drawing.Point(65, 25);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(30, 29);
             this.button7.TabIndex = 12;
@@ -238,7 +240,7 @@
             // 
             this.bCheck.BackgroundImage = global::Tek1.Properties.Resources.check;
             this.bCheck.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bCheck.Location = new System.Drawing.Point(340, 436);
+            this.bCheck.Location = new System.Drawing.Point(17, 376);
             this.bCheck.Name = "bCheck";
             this.bCheck.Size = new System.Drawing.Size(54, 54);
             this.bCheck.TabIndex = 16;
@@ -257,6 +259,21 @@
             this.ttSolve.SetToolTip(this.bRestoreSnap, "Restore a snapshot");
             this.bRestoreSnap.UseVisualStyleBackColor = true;
             this.bRestoreSnap.Click += new System.EventHandler(this.bRestoreSnap_Click);
+            // 
+            // bDefaultNotes
+            // 
+            this.bDefaultNotes.BackgroundImage = global::Tek1.Properties.Resources.notes;
+            this.bDefaultNotes.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bDefaultNotes.Cursor = System.Windows.Forms.Cursors.Default;
+            this.bDefaultNotes.Location = new System.Drawing.Point(124, 43);
+            this.bDefaultNotes.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.bDefaultNotes.Name = "bDefaultNotes";
+            this.bDefaultNotes.Size = new System.Drawing.Size(54, 54);
+            this.bDefaultNotes.TabIndex = 16;
+            this.ttSolve.SetToolTip(this.bDefaultNotes, "Show all (default) notes");
+            this.bDefaultNotes.UseCompatibleTextRendering = true;
+            this.bDefaultNotes.UseVisualStyleBackColor = true;
+            this.bDefaultNotes.Click += new System.EventHandler(this.bDefaultNotes_Click);
             // 
             // bSave
             // 
@@ -312,7 +329,7 @@
             // 
             this.bBackspace.BackgroundImage = global::Tek1.Properties.Resources.backspace;
             this.bBackspace.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bBackspace.Location = new System.Drawing.Point(108, 270);
+            this.bBackspace.Location = new System.Drawing.Point(93, 163);
             this.bBackspace.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.bBackspace.Name = "bBackspace";
             this.bBackspace.Size = new System.Drawing.Size(54, 54);
@@ -376,5 +393,6 @@
         private System.Windows.Forms.SplitContainer split;
         private System.Windows.Forms.OpenFileDialog ofd1;
         private System.Windows.Forms.Button bCheck;
+        private System.Windows.Forms.Button bDefaultNotes;
     }
 }

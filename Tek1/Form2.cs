@@ -118,6 +118,11 @@ namespace Tek1
         {
             _lastShowErrors = View.SetShowErrors(!_lastShowErrors);
         }
+
+        private void bDefaultNotes_Click(object sender, EventArgs e)
+        {
+            View.ShowDefaultNotes();
+        }
     }
 
    

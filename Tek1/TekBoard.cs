@@ -434,8 +434,17 @@ namespace Tek1
             }
             return result;
         }
+        public void SetDefaultNotes()
+        {
+            foreach (TekField field in values)
+                field.SetDefaultNotes();
+        }
     } // TekBoard
+
     
+
+
+
     public class TekBoardParser
     {
         const string SIZEPATTERN = @"size=(?<rows>[1-9]\d*),(?<cols>[1-9]\d*)";
