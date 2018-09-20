@@ -284,6 +284,26 @@ namespace Tek1
                 panel.SelectPanel(!panel.IsSelected);
             }
         }
+        private void Panel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (Board == null)
+                return;
+            if (sender is TekFieldView)
+            {
+                TekFieldView panel = sender as TekFieldView;
+                panel.SetMultiSelected(true);
+            }
+        }
+        private void Panel_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (Board == null)
+                return;
+            if (sender is TekFieldView)
+            {
+                TekFieldView panel = sender as TekFieldView;
+                panel.SelectPanel(!panel.IsSelected);
+            }
+        }
 
         private void Board_Resize(object sender, EventArgs e)
         {
@@ -340,7 +360,9 @@ namespace Tek1
                     newP.Field = Board.values[r, c];
                     newP.NormalColor = AreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
                     newP.SelectedColor = SelectedAreaColors[AreaColorIndex[newP.Field.area.AreaNum]];
-                    newP.Click += new EventHandler(Panel_Click);
+                    //newP.Click += new EventHandler(Panel_Click);
+                    //newP.MouseClick += new MouseEventHandler(Panel_MouseClick);
+                    newP.MouseClick += new MouseEventHandler(Panel_MouseDown);
                     //(newP as Control).KeyDown+= new EventHandler(Panel_KeyDown);
 
                     this.Controls.Add(newP);
@@ -475,12 +497,40 @@ namespace Tek1
             set { _SelectedColor = value; if (IsSelected) BackColor = value; }
         }
 
+        private System.Drawing.Color _MultiSelectedColor;
+        public System.Drawing.Color MultiSelectedColor
+        {
+            get { return _MultiSelectedColor; }
+            set { _MultiSelectedColor = value; if (IsMultiSelected) BackColor = value; }
+        }
         private TekField field;
 
         public bool FieldError { get; set; } = false;
         static public TekFieldView SelectedFieldView = null;
 
+        static public List<TekFieldView> MultiselectFieldView = new List<TekFieldView>();
+
+
         public bool IsSelected { get; set; }
+        public bool IsMultiSelected { get { return MultiselectFieldView.Contains(this);  } set { SetMultiSelected(value); } }
+
+        public void SetMultiSelected(bool onoff)
+        {
+            if (onoff)
+                if (!MultiselectFieldView.Contains(this))
+                {
+                    IsSelected = false;
+                    MultiselectFieldView.Add(this);
+                    BackColor = MultiSelectedColor;
+                }
+            else
+                {
+                    MultiselectFieldView.Remove(this);
+                    BackColor = NormalColor;
+                }
+            Refresh();                    
+        }
+
         private TekPanelData _data;
 
         public void ToggleNote(int value)
@@ -506,8 +556,9 @@ namespace Tek1
             Borders = new TekBorderStyle[(int)TekBorder.bdLast];
             for (int b = 0; b <= (int)TekBorder.bdTop; b++)
                 Borders[b] = TekBorderStyle.tbsNone;
-            NormalColor = Color.AliceBlue; // to find out if something is wrong
+            NormalColor = Color.AliceBlue; 
             SelectedColor = Color.YellowGreen;
+            MultiSelectedColor = Color.DarkBlue;
         }
 
         public void SelectPanel(bool onoff = true)
