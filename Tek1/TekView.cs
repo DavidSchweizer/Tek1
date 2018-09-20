@@ -60,10 +60,10 @@ namespace Tek1
                 return false;
         }
 
-        public bool SetShowErrors()
+        public bool SetShowErrors(bool onoff = true)
         {
-            _view.SetShowErrors();
-            return true;
+            _view.SetShowErrors(onoff);
+            return onoff;
         }
 
             public bool SaveToFile(string FileName)
@@ -430,12 +430,12 @@ namespace Tek1
             return result;
         }
 
-        public void SetShowErrors()
+        public void SetShowErrors(bool onoff = true)
         {
             if (Board == null)
                 return;
             foreach (TekFieldView P in _Panels)
-                P.FieldError = P.Field != null && !P.Field.IsValid();
+                P.FieldError = onoff && P.Field != null && !P.Field.IsValid();
             Refresh();
         }
     } // TekBoardView

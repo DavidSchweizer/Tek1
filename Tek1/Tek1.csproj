@@ -107,6 +107,7 @@
     <None Include="folder.png" />
     <None Include="magic.png" />
     <None Include="backspace.png" />
+    <None Include="check.png" />
     <Content Include="open-folder.jpg" />
     <None Include="open-folder_small.png" />
     <None Include="open-folder_small.jpg" />

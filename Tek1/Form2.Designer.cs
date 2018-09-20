@@ -37,13 +37,6 @@
             this.ofd1 = new System.Windows.Forms.OpenFileDialog();
             this.sfd1 = new System.Windows.Forms.SaveFileDialog();
             this.ttSolve = new System.Windows.Forms.ToolTip(this.components);
-            this.button13 = new System.Windows.Forms.Button();
-            this.bSave = new System.Windows.Forms.Button();
-            this.button12 = new System.Windows.Forms.Button();
-            this.bLoad = new System.Windows.Forms.Button();
-            this.bSolve = new System.Windows.Forms.Button();
-            this.button11 = new System.Windows.Forms.Button();
-            this.bReset = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
@@ -51,7 +44,14 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.split = new System.Windows.Forms.SplitContainer();
-            this.button14 = new System.Windows.Forms.Button();
+            this.bCheck = new System.Windows.Forms.Button();
+            this.bRestoreSnap = new System.Windows.Forms.Button();
+            this.bSave = new System.Windows.Forms.Button();
+            this.bTakeSnap = new System.Windows.Forms.Button();
+            this.bLoad = new System.Windows.Forms.Button();
+            this.bSolve = new System.Windows.Forms.Button();
+            this.bBackspace = new System.Windows.Forms.Button();
+            this.bReset = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.split)).BeginInit();
             this.split.Panel2.SuspendLayout();
@@ -129,95 +129,6 @@
             // 
             this.sfd1.CreatePrompt = true;
             this.sfd1.DefaultExt = "tx";
-            // 
-            // button13
-            // 
-            this.button13.BackgroundImage = global::Tek1.Properties.Resources.rstore23;
-            this.button13.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button13.Location = new System.Drawing.Point(400, 250);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(54, 54);
-            this.button13.TabIndex = 14;
-            this.ttSolve.SetToolTip(this.button13, "Restore a snapshot");
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
-            // 
-            // bSave
-            // 
-            this.bSave.BackgroundImage = global::Tek1.Properties.Resources.save_new;
-            this.bSave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bSave.Location = new System.Drawing.Point(390, 112);
-            this.bSave.Name = "bSave";
-            this.bSave.Size = new System.Drawing.Size(44, 43);
-            this.bSave.TabIndex = 6;
-            this.bSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.ttSolve.SetToolTip(this.bSave, "Save the current state to a file");
-            this.bSave.UseVisualStyleBackColor = true;
-            this.bSave.Click += new System.EventHandler(this.bSave_Click);
-            // 
-            // button12
-            // 
-            this.button12.BackgroundImage = global::Tek1.Properties.Resources.snappie2;
-            this.button12.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button12.Location = new System.Drawing.Point(340, 250);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(54, 54);
-            this.button12.TabIndex = 13;
-            this.ttSolve.SetToolTip(this.button12, "Save a snapshot");
-            this.button12.UseVisualStyleBackColor = true;
-            this.button12.Click += new System.EventHandler(this.button12_Click);
-            // 
-            // bLoad
-            // 
-            this.bLoad.BackgroundImage = global::Tek1.Properties.Resources.open_new;
-            this.bLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bLoad.Location = new System.Drawing.Point(340, 112);
-            this.bLoad.Name = "bLoad";
-            this.bLoad.Size = new System.Drawing.Size(44, 43);
-            this.bLoad.TabIndex = 0;
-            this.bLoad.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.ttSolve.SetToolTip(this.bLoad, "Load a new puzzle from a file");
-            this.bLoad.UseVisualStyleBackColor = true;
-            this.bLoad.Click += new System.EventHandler(this.bLoad_Click);
-            // 
-            // bSolve
-            // 
-            this.bSolve.BackgroundImage = global::Tek1.Properties.Resources.solve;
-            this.bSolve.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.bSolve.Location = new System.Drawing.Point(17, 436);
-            this.bSolve.Name = "bSolve";
-            this.bSolve.Size = new System.Drawing.Size(54, 54);
-            this.bSolve.TabIndex = 7;
-            this.ttSolve.SetToolTip(this.bSolve, "Solve the puzzle");
-            this.bSolve.UseVisualStyleBackColor = true;
-            this.bSolve.Click += new System.EventHandler(this.bSolveClick);
-            // 
-            // button11
-            // 
-            this.button11.BackgroundImage = global::Tek1.Properties.Resources.backspace;
-            this.button11.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button11.Location = new System.Drawing.Point(108, 270);
-            this.button11.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(54, 54);
-            this.button11.TabIndex = 12;
-            this.ttSolve.SetToolTip(this.button11, "Undo the last change");
-            this.button11.UseCompatibleTextRendering = true;
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // bReset
-            // 
-            this.bReset.BackgroundImage = global::Tek1.Properties.Resources.reset1;
-            this.bReset.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.bReset.Location = new System.Drawing.Point(340, 169);
-            this.bReset.Name = "bReset";
-            this.bReset.Size = new System.Drawing.Size(54, 54);
-            this.bReset.TabIndex = 8;
-            this.ttSolve.SetToolTip(this.bReset, "Reset the puzzle");
-            this.bReset.UseCompatibleTextRendering = true;
-            this.bReset.UseVisualStyleBackColor = true;
-            this.bReset.Click += new System.EventHandler(this.bReset_Click);
             // 
             // groupBox1
             // 
@@ -305,15 +216,15 @@
             // 
             // split.Panel2
             // 
-            this.split.Panel2.Controls.Add(this.button14);
-            this.split.Panel2.Controls.Add(this.button13);
+            this.split.Panel2.Controls.Add(this.bCheck);
+            this.split.Panel2.Controls.Add(this.bRestoreSnap);
             this.split.Panel2.Controls.Add(this.groupBox1);
             this.split.Panel2.Controls.Add(this.bSave);
-            this.split.Panel2.Controls.Add(this.button12);
+            this.split.Panel2.Controls.Add(this.bTakeSnap);
             this.split.Panel2.Controls.Add(this.button6);
             this.split.Panel2.Controls.Add(this.bLoad);
             this.split.Panel2.Controls.Add(this.bSolve);
-            this.split.Panel2.Controls.Add(this.button11);
+            this.split.Panel2.Controls.Add(this.bBackspace);
             this.split.Panel2.Controls.Add(this.button5);
             this.split.Panel2.Controls.Add(this.button2);
             this.split.Panel2.Controls.Add(this.bReset);
@@ -323,15 +234,106 @@
             this.split.SplitterDistance = 334;
             this.split.TabIndex = 10;
             // 
-            // button14
+            // bCheck
             // 
-            this.button14.Location = new System.Drawing.Point(340, 362);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(75, 23);
-            this.button14.TabIndex = 11;
-            this.button14.Text = "button14";
-            this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
+            this.bCheck.BackgroundImage = global::Tek1.Properties.Resources.check;
+            this.bCheck.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bCheck.Location = new System.Drawing.Point(340, 436);
+            this.bCheck.Name = "bCheck";
+            this.bCheck.Size = new System.Drawing.Size(54, 54);
+            this.bCheck.TabIndex = 16;
+            this.ttSolve.SetToolTip(this.bCheck, "(Un)Check errors");
+            this.bCheck.UseVisualStyleBackColor = true;
+            this.bCheck.Click += new System.EventHandler(this.bCheck_Click);
+            // 
+            // bRestoreSnap
+            // 
+            this.bRestoreSnap.BackgroundImage = global::Tek1.Properties.Resources.rstore23;
+            this.bRestoreSnap.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bRestoreSnap.Location = new System.Drawing.Point(400, 250);
+            this.bRestoreSnap.Name = "bRestoreSnap";
+            this.bRestoreSnap.Size = new System.Drawing.Size(54, 54);
+            this.bRestoreSnap.TabIndex = 14;
+            this.ttSolve.SetToolTip(this.bRestoreSnap, "Restore a snapshot");
+            this.bRestoreSnap.UseVisualStyleBackColor = true;
+            this.bRestoreSnap.Click += new System.EventHandler(this.bRestoreSnap_Click);
+            // 
+            // bSave
+            // 
+            this.bSave.BackgroundImage = global::Tek1.Properties.Resources.save_new;
+            this.bSave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bSave.Location = new System.Drawing.Point(390, 112);
+            this.bSave.Name = "bSave";
+            this.bSave.Size = new System.Drawing.Size(44, 43);
+            this.bSave.TabIndex = 6;
+            this.bSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.ttSolve.SetToolTip(this.bSave, "Save the current state to a file");
+            this.bSave.UseVisualStyleBackColor = true;
+            this.bSave.Click += new System.EventHandler(this.bSave_Click);
+            // 
+            // bTakeSnap
+            // 
+            this.bTakeSnap.BackgroundImage = global::Tek1.Properties.Resources.snappie2;
+            this.bTakeSnap.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bTakeSnap.Location = new System.Drawing.Point(340, 250);
+            this.bTakeSnap.Name = "bTakeSnap";
+            this.bTakeSnap.Size = new System.Drawing.Size(54, 54);
+            this.bTakeSnap.TabIndex = 13;
+            this.ttSolve.SetToolTip(this.bTakeSnap, "Save a snapshot");
+            this.bTakeSnap.UseVisualStyleBackColor = true;
+            this.bTakeSnap.Click += new System.EventHandler(this.bTakeSnap_Click);
+            // 
+            // bLoad
+            // 
+            this.bLoad.BackgroundImage = global::Tek1.Properties.Resources.open_new;
+            this.bLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bLoad.Location = new System.Drawing.Point(340, 112);
+            this.bLoad.Name = "bLoad";
+            this.bLoad.Size = new System.Drawing.Size(44, 43);
+            this.bLoad.TabIndex = 0;
+            this.bLoad.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.ttSolve.SetToolTip(this.bLoad, "Load a new puzzle from a file");
+            this.bLoad.UseVisualStyleBackColor = true;
+            this.bLoad.Click += new System.EventHandler(this.bLoad_Click);
+            // 
+            // bSolve
+            // 
+            this.bSolve.BackgroundImage = global::Tek1.Properties.Resources.solve;
+            this.bSolve.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bSolve.Location = new System.Drawing.Point(17, 436);
+            this.bSolve.Name = "bSolve";
+            this.bSolve.Size = new System.Drawing.Size(54, 54);
+            this.bSolve.TabIndex = 7;
+            this.ttSolve.SetToolTip(this.bSolve, "Solve the puzzle");
+            this.bSolve.UseVisualStyleBackColor = true;
+            this.bSolve.Click += new System.EventHandler(this.bSolveClick);
+            // 
+            // bBackspace
+            // 
+            this.bBackspace.BackgroundImage = global::Tek1.Properties.Resources.backspace;
+            this.bBackspace.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bBackspace.Location = new System.Drawing.Point(108, 270);
+            this.bBackspace.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.bBackspace.Name = "bBackspace";
+            this.bBackspace.Size = new System.Drawing.Size(54, 54);
+            this.bBackspace.TabIndex = 12;
+            this.ttSolve.SetToolTip(this.bBackspace, "Undo the last change");
+            this.bBackspace.UseCompatibleTextRendering = true;
+            this.bBackspace.UseVisualStyleBackColor = true;
+            this.bBackspace.Click += new System.EventHandler(this.bUnPlay_Click);
+            // 
+            // bReset
+            // 
+            this.bReset.BackgroundImage = global::Tek1.Properties.Resources.reset1;
+            this.bReset.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.bReset.Location = new System.Drawing.Point(340, 169);
+            this.bReset.Name = "bReset";
+            this.bReset.Size = new System.Drawing.Size(54, 54);
+            this.bReset.TabIndex = 8;
+            this.ttSolve.SetToolTip(this.bReset, "Reset the puzzle");
+            this.bReset.UseCompatibleTextRendering = true;
+            this.bReset.UseVisualStyleBackColor = true;
+            this.bReset.Click += new System.EventHandler(this.bReset_Click);
             // 
             // Form2
             // 
@@ -368,11 +370,11 @@
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button button12;
-        private System.Windows.Forms.Button button13;
+        private System.Windows.Forms.Button bBackspace;
+        private System.Windows.Forms.Button bTakeSnap;
+        private System.Windows.Forms.Button bRestoreSnap;
         private System.Windows.Forms.SplitContainer split;
         private System.Windows.Forms.OpenFileDialog ofd1;
-        private System.Windows.Forms.Button button14;
+        private System.Windows.Forms.Button bCheck;
     }
 }

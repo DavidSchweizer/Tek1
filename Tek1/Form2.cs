@@ -15,7 +15,7 @@ namespace Tek1
     public partial class Form2 : Form
     {
         TekView View;
-
+        bool _lastShowErrors = false;
         public Form2()
         {
             InitializeComponent();
@@ -81,18 +81,18 @@ namespace Tek1
                 View.ToggleSelectedNoteValue(value);
         }
 
-        private void button11_Click(object sender, EventArgs e)
+        private void bUnPlay_Click(object sender, EventArgs e)
         {
             View.UnPlay();
 
         }
 
-        private void button12_Click(object sender, EventArgs e)
+        private void bTakeSnap_Click(object sender, EventArgs e)
         {
             View.TakeSnapshot(String.Format("snapshot {0}", 1 + View.SnapshotCount()));
         }
 
-        private void button13_Click(object sender, EventArgs e)
+        private void bRestoreSnap_Click(object sender, EventArgs e)
         {
             View.RestoreSnapshot("snapshot 1");
         }
@@ -107,7 +107,16 @@ namespace Tek1
 
         private void button14_Click(object sender, EventArgs e)
         {
-            View.SetShowErrors();
+        }
+
+        private void cbShowError_CheckedChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void bCheck_Click(object sender, EventArgs e)
+        {
+            _lastShowErrors = View.SetShowErrors(!_lastShowErrors);
         }
     }
 
