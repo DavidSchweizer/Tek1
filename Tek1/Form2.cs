@@ -123,6 +123,12 @@ namespace Tek1
         {
             View.ShowDefaultNotes();
         }
+
+        private void cbMultipleSelect_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbMultipleSelect.Checked)
+                View.SelectMode = TekBoardView.SelectMode.smMultiple;
+        }
     }
 
    
