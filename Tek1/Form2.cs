@@ -127,7 +127,9 @@ namespace Tek1
         private void cbMultipleSelect_CheckedChanged(object sender, EventArgs e)
         {
             if (cbMultipleSelect.Checked)
-                View.SelectMode = TekBoardView.SelectMode.smMultiple;
+                View.Selector.CurrentMode = TekSelect.SelectMode.smMultiple;
+            else
+                View.Selector.CurrentMode = TekSelect.SelectMode.smSingle;
         }
     }
 

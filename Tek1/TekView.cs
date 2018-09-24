@@ -15,6 +15,8 @@ namespace Tek1
         public TekBoard Board { get { return _view.Board; } }
         protected TekMoves Moves = null;
 
+        public TekSelect Selector { get { if (_view == null) return null; return _view.Selector; } }
+
 
         public TekView(Control parent, Point TopLeft, Point BottomRight)
         {
@@ -85,9 +87,9 @@ namespace Tek1
 
         public bool ToggleSelectedValue(int value)
         {
-            if (Board != null && TekFieldView.SelectedFieldView != null)
+            if (Board != null && _view.Selector.CurrentFieldView != null)
             {
-                Moves.PlayValue(TekFieldView.SelectedFieldView.Row, TekFieldView.SelectedFieldView.Col, value);
+                Moves.PlayValue(_view.Selector.CurrentFieldView.Row, _view.Selector.CurrentFieldView.Col, value);
                 _view.Refresh();
                 return true;
             }
@@ -119,9 +121,9 @@ namespace Tek1
 
         public bool ToggleSelectedNoteValue(int value)
         {
-            if (Board != null && TekFieldView.SelectedFieldView != null)
+            if (Board != null && _view.Selector.CurrentFieldView != null)
             {
-                Moves.PlayNote(TekFieldView.SelectedFieldView.Row, TekFieldView.SelectedFieldView.Col, value);
+                Moves.PlayNote(_view.Selector.CurrentFieldView.Row, _view.Selector.CurrentFieldView.Col, value);
                 _view.Refresh();
                 return true;
             }
@@ -174,7 +176,7 @@ namespace Tek1
 
         public void MoveSelected(int deltaR, int deltaC)
         {
-            TekFieldView v = TekFieldView.SelectedFieldView;
+            TekFieldView v = _view.Selector.CurrentFieldView;
             if (v == null)
                 return;
            _view.SelectField(v.Field.Row + deltaR, v.Field.Col + deltaC);
@@ -183,7 +185,7 @@ namespace Tek1
 
         public void HandleKeyDown(ref Message msg, Keys keyData)
         {
-            if (TekFieldView.SelectedFieldView != null)
+            if (_view.Selector.CurrentFieldView != null)
             {
                 switch (keyData)
                 {
@@ -230,7 +232,8 @@ namespace Tek1
     class TekSelect
     {
         public enum SelectMode { smNone, smSingle, smMultiple };
-        public TekFieldView _currentFieldView = null;
+        private TekFieldView _currentFieldView = null;
+        public TekFieldView CurrentFieldView { get { return _currentFieldView; } }
         public List<TekFieldView> MultiselectFieldView = new List<TekFieldView>();
 
         public void SelectCurrentField(TekFieldView newfield)
@@ -239,12 +242,19 @@ namespace Tek1
                 CurrentMode = SelectMode.smNone;
             else
             {
+                if (CurrentMode == SelectMode.smNone)
+                    _currentMode = SelectMode.smSingle;
                 switch (CurrentMode)
                 {
                     case SelectMode.smSingle:
-                        if (_currentFieldView.IsSelected)
-                            _currentFieldView.SetFieldSelected(false);
-                            newfield.SetFieldSelected(!newfield.IsSelected);
+                        if (_currentFieldView != null && _currentFieldView.IsSelected)
+                            _currentFieldView.SetSelected(false);
+                            newfield.SetSelected(!newfield.IsSelected);
+                        foreach(TekFieldView field in MultiselectFieldView)
+                        {
+                            field.SetMultiSelected(false);
+                        }
+                        MultiselectFieldView.Clear();
                         break;
                     case SelectMode.smMultiple:
                         newfield.SetMultiSelected(!newfield.IsMultiSelected);
@@ -258,7 +268,7 @@ namespace Tek1
             }
         }
 
-        private SelectMode _currentMode;
+        private SelectMode _currentMode = SelectMode.smSingle;
         public SelectMode CurrentMode { get { return _currentMode; } set { SetCurrentMode(value); } }
 
         public void SetCurrentMode(SelectMode value)
@@ -270,11 +280,11 @@ namespace Tek1
                 switch (CurrentMode)
                 {
                     case SelectMode.smNone:                    
-                        _currentFieldView.SetFieldSelected(false);
+                        _currentFieldView.SetSelected(false);
                         _currentFieldView.SetMultiSelected(false);
                         break;
                     case SelectMode.smSingle:
-                        _currentFieldView.SetFieldSelected(false);
+                        _currentFieldView.SetSelected(false);
                         break;
                     case SelectMode.smMultiple:
                         _currentFieldView.SetMultiSelected(false);
@@ -289,14 +299,20 @@ namespace Tek1
                         _currentFieldView = null;
                         break;
                     case SelectMode.smSingle:
-                        _currentFieldView.SetFieldSelected(true);
+                        SelectCurrentField(_currentFieldView);
                         break;
                     case SelectMode.smMultiple:
-                        _currentFieldView.SetMultiSelected(true);
+                        _currentFieldView.SetSelected(true);
                         break;
                 }
                 _currentFieldView.Refresh();
             }
+        }
+        public void Reset()
+        {
+            CurrentMode = SelectMode.smNone;
+            _currentFieldView = null;
+            MultiselectFieldView.Clear();
         }
     }
 
@@ -314,7 +330,7 @@ namespace Tek1
             };
         const int MAXCOLOR = 9;
         static int[] AreaColorIndex = null;
-        public TekSelect TekSelect = new TekSelect();
+        public TekSelect Selector = new TekSelect();
 
         private TekFieldView[,] _Panels = null;
 
@@ -326,6 +342,7 @@ namespace Tek1
         {
             board = value;
             SetAreaColors(board);
+            Selector.Reset();
             initializePanels();
             SetBorders();
         }
@@ -334,6 +351,7 @@ namespace Tek1
         {
             if (_Panels == null)
                 return;
+            Selector.Reset();
             for (int r = 0; r < _Panels.GetLength(0); r++)
                 for (int c = 0; c < _Panels.GetLength(1); c++)
                 {
@@ -354,33 +372,27 @@ namespace Tek1
                 return;
             if (sender is TekFieldView)
             {
-                TekFieldView panel = sender as TekFieldView;
-                if (panel.IsSelected)
-                    panel.SelectMode = TekBoardView.SelectMode.smNone;
-                else
-                    panel.SelectMode = TekBoardView.SelectMode.smSingle;
-
-                panel.SetFieldSelected(!panel.IsSelected);
+                Selector.SelectCurrentField(sender as TekFieldView);
             }
         }
+
         private void Panel_MouseDown(object sender, MouseEventArgs e)
         {
             if (Board == null)
                 return;
             if (sender is TekFieldView)
             {
-                TekFieldView panel = sender as TekFieldView;
-                panel.SetMultiSelected(true);
+                Selector.SelectCurrentField(sender as TekFieldView);
             }
         }
+
         private void Panel_MouseClick(object sender, MouseEventArgs e)
         {
             if (Board == null)
                 return;
             if (sender is TekFieldView)
             {
-                TekFieldView panel = sender as TekFieldView;
-                panel.SetFieldSelected(!panel.IsSelected);
+                Selector.SelectCurrentField(sender as TekFieldView);
             }
         }
 
@@ -410,9 +422,7 @@ namespace Tek1
         {
             v.Size = new Size(TileSize, TileSize);
             v.Location = new Point(PADDING / 2 + data.TileSize * c, PADDING / 2 + data.TileSize * r);
-//            this.Width = PADDING + Board.Cols * data.TileSize;
-//            this.Height = PADDING + Board.Rows * data.TileSize;
-        }
+       }
 
         private void initializePanels()
         {
@@ -533,9 +543,9 @@ namespace Tek1
 
         public TekFieldView SelectField(int row, int col)
         {
-            TekFieldView result = TekFieldView.SelectedFieldView;
+            TekFieldView result = Selector.CurrentFieldView;
             if (row >= 0 && row < Board.Rows && col >= 0 && col < Board.Cols)
-                _Panels[row, col].SetFieldSelected();
+               Selector.SelectCurrentField(_Panels[row, col]);
             return result;
         }
 
@@ -562,40 +572,6 @@ namespace Tek1
         public enum TekBorder { bdTop, bdRight, bdBottom, bdLeft, bdLast };
         public enum TekBorderStyle { tbsNone, tbsInternal, tbsExternal, tbsBoard, tbsSelected };
 
-        private TekBoardView.SelectMode _selectMode;
-        public TekBoardView.SelectMode SelectMode {  get { return _selectMode; } set { SetSelectMode(value); }} 
-
-        public void SetSelectMode(TekBoardView.SelectMode value)
-        {
-            if (SelectMode == value)
-                return;
-            switch(SelectMode)
-            {
-                case TekBoardView.SelectMode.smNone:
-                    SetFieldSelected(false);
-                    SetMultiSelected(false);
-                    break;
-                case TekBoardView.SelectMode.smSingle:
-                    SetFieldSelected(false);
-                    break;
-                case TekBoardView.SelectMode.smMultiple:
-                    SetMultiSelected(false);
-                    break;
-            }
-            _selectMode = value;
-            switch (SelectMode)
-            {
-                case TekBoardView.SelectMode.smNone:
-                    break;
-                case TekBoardView.SelectMode.smSingle:
-                    SetFieldSelected(true);
-                    break;
-                case TekBoardView.SelectMode.smMultiple:
-                    SetMultiSelected(true);
-                    break;
-            }
-            Refresh();
-        }
 
         private System.Drawing.Color _NormalColor;
         public System.Drawing.Color NormalColor
@@ -621,24 +597,39 @@ namespace Tek1
 
         public bool FieldError { get; set; } = false;
 
-        public bool IsSelected { get; set; }
-        public bool IsMultiSelected { get { return MultiselectFieldView.Contains(this);  } set { SetMultiSelected(value); } }
 
-        public void SetMultiSelected(bool onoff)
+        private bool _isSelected;
+        public bool IsSelected { get { return _isSelected; } set { SetSelected(value); Refresh(); } }
+
+        public void SetSelected(bool onoff = true)
         {
-            if (onoff)
-                if (!MultiselectFieldView.Contains(this))
-                {
-                    IsSelected = false;
-                    MultiselectFieldView.Add(this);
-                    BackColor = MultiSelectedColor;
-                }
+            if (Field != null && Field.initial)
+                return;
+            _isSelected = onoff;
+            if (IsSelected)
+            {
+                BackColor = SelectedColor;
+            }
             else
-                {
-                    MultiselectFieldView.Remove(this);
-                    BackColor = NormalColor;
-                }
-            Refresh();                    
+            {
+                BackColor = NormalColor;
+            }
+            Refresh();
+        }
+
+        private bool _isMultiSelected;
+        public bool IsMultiSelected { get { return _isMultiSelected; } set { SetMultiSelected(value); Refresh(); } }
+
+        public void SetMultiSelected(bool onoff = true)
+        {
+            if (Field != null && Field.initial)
+                return;
+            _isMultiSelected = onoff;
+            if (IsMultiSelected)
+                BackColor = MultiSelectedColor;
+            else
+                BackColor = NormalColor;
+            Refresh();
         }
 
         private TekPanelData _data;
@@ -671,22 +662,7 @@ namespace Tek1
             MultiSelectedColor = Color.DarkBlue;
         }
 
-        public void SetFieldSelected(bool onoff = true)
-        {
-            if (Field != null && Field.initial)
-                return;
-            if (!onoff)
-            {
-                this.BackColor = NormalColor;
-                IsSelected = false;
-            }
-            else
-            {
-                IsSelected = true;
-                this.BackColor = SelectedColor;
-            }
-            this.Refresh();
-        }
+
 
         private void SetField(TekField value)
         {
