@@ -123,8 +123,7 @@ namespace Tek1
         {
             if (Board != null && _view.Selector.CurrentFieldView != null)
             {
-                Moves.PlayNote(_view.Selector.CurrentFieldView.Row, _view.Selector.CurrentFieldView.Col, value);
-                _view.Refresh();
+                _view.Selector.ToggleSelectedNoteValue(value, Moves);                
                 return true;
             }
             else return false;
@@ -249,8 +248,8 @@ namespace Tek1
                     case SelectMode.smSingle:
                         if (_currentFieldView != null && _currentFieldView.IsSelected)
                             _currentFieldView.SetSelected(false);
-                            newfield.SetSelected(!newfield.IsSelected);
-                        foreach(TekFieldView field in MultiselectFieldView)
+                        newfield.SetSelected(!newfield.IsSelected);
+                        foreach (TekFieldView field in MultiselectFieldView)
                         {
                             field.SetMultiSelected(false);
                         }
@@ -279,7 +278,7 @@ namespace Tek1
             if (_currentFieldView != null)
                 switch (CurrentMode)
                 {
-                    case SelectMode.smNone:                    
+                    case SelectMode.smNone:
                         _currentFieldView.SetSelected(false);
                         _currentFieldView.SetMultiSelected(false);
                         break;
@@ -314,7 +313,32 @@ namespace Tek1
             _currentFieldView = null;
             MultiselectFieldView.Clear();
         }
-    }
+
+        private void _toggleFieldNoteValue(TekFieldView view, int value, TekMoves Moves)
+        {
+            if (view != null)
+            {
+                Moves.PlayNote(view.Row, view.Col, value);
+                view.Refresh();
+            }
+        }
+        public void ToggleSelectedNoteValue(int value, TekMoves Moves)
+        {
+            switch (CurrentMode)
+            {
+                case SelectMode.smSingle:
+                    _toggleFieldNoteValue(CurrentFieldView, value, Moves);
+                    break;
+                case SelectMode.smMultiple:
+                    foreach(TekFieldView fieldView in MultiselectFieldView)
+                    {
+                        _toggleFieldNoteValue(fieldView, value, Moves);                        
+                    }
+                    break;
+            } 
+        }
+
+}
 
     class TekBoardView : Panel
     {
@@ -731,7 +755,7 @@ namespace Tek1
             Data.SetCenterAlignment();
             e.Graphics.DrawString(value.ToString(),
                 Data.ValueFont[TekPanelData.FONT_NOTE],
-                    Data.TextBrush[IsSelected ? TekPanelData.PANEL_SELECTED : TekPanelData.PANEL_NORMAL],
+                    Data.TextBrush[(IsSelected || IsMultiSelected) ? TekPanelData.PANEL_SELECTED : TekPanelData.PANEL_NORMAL],
                     Data.NotePoint[value - 1], Data.Format);
         }
 
