@@ -123,6 +123,7 @@
             // ofd1
             // 
             this.ofd1.DefaultExt = "tx";
+            this.ofd1.DereferenceLinks = false;
             this.ofd1.FileName = "9x7-1.tx";
             this.ofd1.Filter = "tx files (*.tx)|*.tx|All files (*.*)|*.*";
             this.ofd1.Title = "Open TEK file";
@@ -148,7 +149,7 @@
             // 
             this.bRestoreSnap.BackgroundImage = global::Tek1.Properties.Resources.rstore23;
             this.bRestoreSnap.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bRestoreSnap.Location = new System.Drawing.Point(400, 250);
+            this.bRestoreSnap.Location = new System.Drawing.Point(217, 235);
             this.bRestoreSnap.Name = "bRestoreSnap";
             this.bRestoreSnap.Size = new System.Drawing.Size(54, 54);
             this.bRestoreSnap.TabIndex = 14;
@@ -175,7 +176,7 @@
             // 
             this.bSave.BackgroundImage = global::Tek1.Properties.Resources.save_new;
             this.bSave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bSave.Location = new System.Drawing.Point(390, 112);
+            this.bSave.Location = new System.Drawing.Point(158, 382);
             this.bSave.Name = "bSave";
             this.bSave.Size = new System.Drawing.Size(44, 43);
             this.bSave.TabIndex = 6;
@@ -188,7 +189,7 @@
             // 
             this.bTakeSnap.BackgroundImage = global::Tek1.Properties.Resources.snappie2;
             this.bTakeSnap.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bTakeSnap.Location = new System.Drawing.Point(340, 250);
+            this.bTakeSnap.Location = new System.Drawing.Point(158, 235);
             this.bTakeSnap.Name = "bTakeSnap";
             this.bTakeSnap.Size = new System.Drawing.Size(54, 54);
             this.bTakeSnap.TabIndex = 13;
@@ -200,7 +201,7 @@
             // 
             this.bLoad.BackgroundImage = global::Tek1.Properties.Resources.open_new;
             this.bLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bLoad.Location = new System.Drawing.Point(340, 112);
+            this.bLoad.Location = new System.Drawing.Point(108, 382);
             this.bLoad.Name = "bLoad";
             this.bLoad.Size = new System.Drawing.Size(44, 43);
             this.bLoad.TabIndex = 0;
@@ -237,9 +238,9 @@
             // 
             // bReset
             // 
-            this.bReset.BackgroundImage = global::Tek1.Properties.Resources.reset1;
+            this.bReset.BackgroundImage = global::Tek1.Properties.Resources.reset;
             this.bReset.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.bReset.Location = new System.Drawing.Point(340, 169);
+            this.bReset.Location = new System.Drawing.Point(109, 436);
             this.bReset.Name = "bReset";
             this.bReset.Size = new System.Drawing.Size(54, 54);
             this.bReset.TabIndex = 8;
@@ -350,14 +351,14 @@
             this.split.Panel2.Controls.Add(this.bReset);
             this.split.Panel2.Controls.Add(this.button3);
             this.split.Panel2.Controls.Add(this.button4);
-            this.split.Size = new System.Drawing.Size(800, 552);
-            this.split.SplitterDistance = 334;
+            this.split.Size = new System.Drawing.Size(946, 552);
+            this.split.SplitterDistance = 616;
             this.split.TabIndex = 10;
             // 
             // cbMultipleSelect
             // 
             this.cbMultipleSelect.AutoSize = true;
-            this.cbMultipleSelect.Location = new System.Drawing.Point(132, 257);
+            this.cbMultipleSelect.Location = new System.Drawing.Point(154, 163);
             this.cbMultipleSelect.Name = "cbMultipleSelect";
             this.cbMultipleSelect.Size = new System.Drawing.Size(138, 24);
             this.cbMultipleSelect.TabIndex = 17;
@@ -366,14 +367,14 @@
             this.cbMultipleSelect.UseVisualStyleBackColor = true;
             this.cbMultipleSelect.CheckedChanged += new System.EventHandler(this.cbMultipleSelect_CheckedChanged);
             // 
-            // Form2
+            // PlayForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 552);
+            this.ClientSize = new System.Drawing.Size(946, 552);
             this.Controls.Add(this.split);
             this.KeyPreview = true;
-            this.Name = "Form2";
+            this.Name = "PlayForm";
             this.groupBox1.ResumeLayout(false);
             this.split.Panel2.ResumeLayout(false);
             this.split.Panel2.PerformLayout();
