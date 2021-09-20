@@ -12,6 +12,7 @@ namespace Tek1
     static public class Const
     {
         public const int MAXTEK = 5;
+        public const string HELLO = "Hello Git!";
     }
 
     public class TekField
